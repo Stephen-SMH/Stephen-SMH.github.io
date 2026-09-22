@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0; url=/en/" />
+    <script>location.replace("/en/");</script>
+    <title>Soe Moe Htet</title>
+    <style>
+      body {
+        margin: 0;
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        background: #101418;
+        color: #819098;
+        font: 15px/1.55 ui-sans-serif, system-ui, sans-serif;
+      }
+      a {
+        color: #2da9d2;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Static export has no server, so "/" can't 307-redirect like a normal
+         Next.js redirects() rule would. This plain file (copied verbatim by
+         `next build`) stands in for that, outside the app-router tree. -->
+    <p>Redirecting to <a href="/en/">/en/</a>&hellip;</p>
+  </body>
+</html>
