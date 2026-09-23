@@ -1,3 +1,5 @@
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants.js";
+
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
@@ -11,4 +13,14 @@ const config = {
   ...(process.env.ARTIFACT_BUILD ? { assetPrefix: "/static" } : {}),
 };
 
-export default config;
+// `next dev` never serves public/index.html at "/", so mirror its redirect
+// there. Export builds ignore redirects(), so this stays dev-only.
+export default (phase) =>
+  phase === PHASE_DEVELOPMENT_SERVER
+    ? {
+        ...config,
+        async redirects() {
+          return [{ source: "/", destination: "/en/", permanent: false }];
+        },
+      }
+    : config;
