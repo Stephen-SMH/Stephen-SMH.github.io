@@ -1,0 +1,7 @@
+---
+const { eyebrow, title } = Astro.props as { eyebrow?: string; title: string };
+---
+<div class="mb-14 sm:mb-20">
+  {eyebrow && <span class="eyebrow mb-6" data-reveal="fade">{eyebrow}</span>}
+  <h2 data-split="lines" class="font-display text-[clamp(2.5rem,7vw,5.5rem)] font-semibold leading-[1] tracking-tighter text-ink">{title}</h2>
+</div>

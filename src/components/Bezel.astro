@@ -1,0 +1,27 @@
+---
+import { nextPhase } from "./ui";
+
+/**
+ * Double-bezel container: outer tray + inner plate. `tilt` adds 3D pointer tilt
+ * + spotlight; `float` (on by default for tilt cards) adds the ambient orbit + glow.
+ */
+const {
+  class: className = "",
+  core = "",
+  lift = false,
+  tilt = false,
+  float = tilt,
+} = Astro.props as { class?: string; core?: string; lift?: boolean; tilt?: boolean; float?: boolean };
+const phase = float ? nextPhase() : undefined;
+---
+{float ? (
+  <div class="card-float" style={`--phase:${phase}`}>
+    <div class:list={["bezel", lift && "bezel-lift", className]} data-tilt={tilt ? "" : undefined}>
+      <div class:list={["bezel-core", core]}><slot /></div>
+    </div>
+  </div>
+) : (
+  <div class:list={["bezel", lift && "bezel-lift", className]} data-tilt={tilt ? "" : undefined}>
+    <div class:list={["bezel-core", core]}><slot /></div>
+  </div>
+)}

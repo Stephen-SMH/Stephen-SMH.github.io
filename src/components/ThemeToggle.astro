@@ -1,0 +1,18 @@
+---
+import { Moon, Sun } from "@phosphor-icons/react/dist/ssr";
+
+const { label } = Astro.props as { label: string };
+---
+<!-- Icon swap is pure CSS (global.css) so it is right before any JS runs; the
+     click is handled by one delegated listener in src/scripts/theme.ts. -->
+<button
+  type="button"
+  data-theme-toggle
+  aria-label={label}
+  title={label}
+  class="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition-colors duration-500 hover:bg-ink/10 hover:text-ink active:scale-95"
+>
+  <!-- Shows the theme you would switch TO: sun while dark, moon while light. -->
+  <Sun size={18} weight="light" className="theme-icon-sun" aria-hidden="true" />
+  <Moon size={18} weight="light" className="theme-icon-moon" aria-hidden="true" />
+</button>

@@ -1,0 +1,76 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+import "@fontsource-variable/noto-sans-thai";
+import "@fontsource-variable/noto-sans-myanmar";
+import "../styles/global.css";
+import { localeMeta, locales, type Locale } from "@/content";
+
+const { locale, title, description, name } = Astro.props as {
+  locale: Locale;
+  title: string;
+  description: string;
+  name: string;
+};
+
+/**
+ * Runs inline in <head>, before first paint. Dark is the default; we
+ * deliberately ignore prefers-color-scheme. Marks the page `.js`, and `.motion`
+ * only when the visitor has not asked for reduced motion, so the entrance
+ * states in global.css never hide content that JS will not reveal.
+ * `data-intro` plays the preloader once per session.
+ */
+const boot = `(function(){
+  function apply(d){
+    var t="dark";try{var s=localStorage.getItem("theme");if(s==="light"||s==="dark")t=s}catch(e){}
+    d.dataset.theme=t;d.classList.add("js");
+    if(!matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("motion");
+  }
+  var d=document.documentElement;apply(d);
+  try{if(d.classList.contains("motion")&&!sessionStorage.getItem("intro")){d.dataset.intro="play";}}catch(e){}
+  setTimeout(function(){if(!window.__motionReady){d.classList.remove("motion");delete d.dataset.intro}},5000);
+  document.addEventListener("astro:after-swap",function(){apply(document.documentElement)});
+})();`;
+---
+<html lang={localeMeta[locale].htmlLang} data-theme="dark" data-locale={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {locales.map((l) => <link rel="alternate" hreflang={localeMeta[l].htmlLang} href={`/${l}/`} />)}
+    <script is:inline set:html={boot} />
+    <ClientRouter />
+  </head>
+  <body class="font-sans antialiased">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="progress" data-progress aria-hidden="true" transition:persist="progress"></div>
+    <div class="cursor cursor-ring" data-cursor-ring aria-hidden="true" transition:persist="cursor-ring"></div>
+    <div class="cursor cursor-dot" data-cursor-dot aria-hidden="true" transition:persist="cursor-dot"></div>
+
+    <div class="preloader" data-preloader aria-hidden="true">
+      <div class="preloader-panel" data-preloader-panel>
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6">
+          <p class="overflow-hidden font-display text-[clamp(2.5rem,9vw,6.5rem)] font-semibold leading-none tracking-tighter text-ink">
+            <span class="block" data-preloader-name>{name}</span>
+          </p>
+          <div class="h-px w-[min(18rem,60vw)] overflow-hidden bg-rule">
+            <div class="h-full origin-left bg-accent" data-preloader-bar style="transform:scaleX(0)"></div>
+          </div>
+        </div>
+        <p
+          class="absolute bottom-6 right-6 font-mono text-[clamp(2.5rem,8vw,6rem)] font-medium leading-none tabular-nums text-ink-faint sm:bottom-10 sm:right-10"
+          data-preloader-count
+        >0</p>
+      </div>
+    </div>
+
+    <slot />
+
+    <script>
+      import "../scripts/motion";
+    </script>
+  </body>
+</html>

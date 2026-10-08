@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
 :root {
   --ease: cubic-bezier(0.32, 0.72, 0, 1);
@@ -93,6 +94,12 @@
 /* ==========================================================================
    2. TAILWIND THEME — utilities read the tokens above (no literals here).
    ========================================================================== */
+@property --ty {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 @theme inline {
   --color-paper: var(--paper);
   --color-paper-raised: var(--paper-raised);
@@ -128,16 +135,15 @@
 
   --shadow-float: var(--shadow);
 
-  --font-sans: var(--font-geist), var(--font-noto-thai), var(--font-noto-myanmar), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
-  --font-display: var(--font-geist), var(--font-noto-thai), var(--font-noto-myanmar), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Geist Variable", "Noto Sans Thai Variable", "Noto Sans Myanmar Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: "Geist Variable", "Noto Sans Thai Variable", "Noto Sans Myanmar Variable", ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme {
   --animate-blink: blink 1.1s step-end infinite;
   --animate-drift: drift 24s cubic-bezier(0.37, 0, 0.63, 1) infinite;
-  --animate-marquee: marquee 55s linear infinite;
-
+  
   @keyframes blink {
     0%,
     100% {
@@ -145,11 +151,6 @@
     }
     50% {
       opacity: 0;
-    }
-  }
-  @keyframes marquee {
-    to {
-      transform: translateX(-50%);
     }
   }
   @keyframes drift {
@@ -163,34 +164,14 @@
   }
 }
 
-@keyframes reveal {
-  0% {
-    opacity: 0;
-    transform: translateY(56px);
-    filter: blur(10px);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-    filter: blur(0);
-  }
-}
-
-@keyframes rise {
-  0% {
-    transform: translateY(110%);
-  }
-  100% {
-    transform: none;
-  }
-}
-
 /* ==========================================================================
    3. BASE
    ========================================================================== */
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 5.5rem;
+}
+html:not(.lenis) {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -256,16 +237,6 @@ h3 {
   border-radius: 9999px;
 }
 
-/* Scroll-reveal: hidden only once JS confirmed (`.js` is set pre-paint by the
-   theme script), so no-JS visitors and crawlers still see everything. */
-.js [data-reveal] {
-  opacity: 0;
-}
-.js [data-reveal="shown"] {
-  opacity: 1;
-  animation: reveal 1s var(--ease) forwards;
-}
-
 /* Theme-toggle icon swap is CSS-only so SSR + pre-hydration script never flash. */
 .theme-icon-moon {
   display: none;
@@ -288,8 +259,9 @@ h3 {
     border-radius: 2rem;
     background-color: var(--bezel-shell);
     box-shadow: 0 0 0 1px var(--bezel-ring);
+    transform: perspective(1100px) translateY(var(--ty, 0px)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     transition:
-      transform 0.8s var(--ease),
+      --ty 0.8s var(--ease),
       box-shadow 0.8s var(--ease);
   }
   .bezel-core {
@@ -300,7 +272,7 @@ h3 {
     overflow: hidden;
   }
   .bezel-lift:hover {
-    transform: translateY(-4px);
+    --ty: -4px;
     box-shadow:
       0 0 0 1px color-mix(in oklab, var(--accent) 38%, var(--bezel-ring)),
       0 36px 70px -34px var(--glow);
@@ -393,26 +365,6 @@ h3 {
     box-shadow: 0 0 0 1px var(--bezel-ring);
   }
 
-  .word-mask {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: top;
-    padding-bottom: 0.12em;
-    margin-bottom: -0.12em;
-  }
-  .word-mask > span {
-    display: inline-block;
-    transform: translateY(110%);
-    animation: rise 1.3s var(--ease) forwards;
-  }
-
-  .marquee-track {
-    animation: var(--animate-marquee);
-  }
-  .marquee:hover .marquee-track {
-    animation-play-state: paused;
-  }
-
   .grid-backdrop {
     background-image:
       linear-gradient(to right, color-mix(in oklab, var(--ink) 7%, transparent) 1px, transparent 1px),
@@ -435,12 +387,7 @@ h3 {
 
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
-  }
-  .js [data-reveal],
-  .js [data-reveal="shown"] {
-    opacity: 1;
-    animation: none;
+    scroll-behavior: auto !important;
   }
   *,
   *::before,
@@ -450,13 +397,393 @@ h3 {
     transition-duration: 0.01ms !important;
   }
   .bezel-lift:hover {
-    transform: none;
+    --ty: 0px;
   }
-  .word-mask > span {
-    transform: none;
-    animation: none;
+}
+
+/* ==========================================================================
+   5. MOTION LAYER — driven by src/scripts/motion.ts (GSAP + Lenis).
+   `html.motion` is set pre-paint only when JS runs and the visitor has not
+   asked for reduced motion; without it every element below is simply visible.
+   The script adds `.is-in` as each element starts its entrance.
+   ========================================================================== */
+html.motion :is([data-reveal], [data-split], [data-words], [data-hero], [data-term]):not(.is-in) {
+  visibility: hidden;
+}
+
+/* GSAP owns .btn transforms (magnetic pull), so a CSS transform transition would smear them. */
+html.motion .btn {
+  transition-property: background-color, box-shadow;
+}
+
+/* Masked line / word / char reveals (GSAP SplitText wraps in these). */
+.split-mask {
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+/* Reading-pace highlight: words light up as the paragraph scrolls through. */
+[data-words] .word {
+  display: inline-block;
+}
+
+/* Hairline that draws itself across (experience dividers, footer rule). */
+.draw-rule {
+  height: 1px;
+  background: var(--rule);
+  transform-origin: left center;
+}
+
+/* Spotlight that follows the pointer inside tilt cards. */
+.bezel-core::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--spot, 0);
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--accent) 16%, transparent), transparent 62%);
+  transition: opacity 0.5s var(--ease);
+}
+.bezel-core {
+  position: relative;
+}
+
+/* Preloader: shown only on the first visit of a session (head script sets it). */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  pointer-events: none;
+}
+html[data-intro="play"] .preloader {
+  display: block;
+}
+.preloader-panel {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+}
+.preloader-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(60% 50% at 50% 55%, var(--accent-soft), transparent 70%);
+}
+html[data-intro="play"] body {
+  overflow: hidden;
+}
+
+/* Scroll progress hairline, top of the viewport. */
+.progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 80;
+  height: 2px;
+  pointer-events: none;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 40%, white));
+}
+
+/* Cursor follower (fine pointers only; the native cursor stays). */
+.cursor {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  html.motion .cursor {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 90;
+    pointer-events: none;
+    border-radius: 9999px;
+    opacity: 0;
+    will-change: transform;
   }
+  html.motion .cursor-dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background: var(--accent);
+  }
+  html.motion .cursor-ring {
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent) 60%, transparent);
+    transition:
+      width 0.5s var(--ease),
+      height 0.5s var(--ease),
+      margin 0.5s var(--ease),
+      background-color 0.5s var(--ease);
+  }
+  html.motion .cursor-ring.is-hot {
+    width: 76px;
+    height: 76px;
+    margin: -38px 0 0 -38px;
+    background-color: color-mix(in oklab, var(--accent) 14%, transparent);
+  }
+}
+
+/* Floating nav hides while reading down, returns on scroll up. */
+[data-nav] {
+  transition: transform 0.7s var(--ease);
+}
+[data-nav][data-hidden="true"] {
+  transform: translateY(-140%);
+}
+
+/* Theme change as a circular wipe from the toggle (View Transitions API). */
+html.theme-vt::view-transition-old(root),
+html.theme-vt::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html.theme-vt::view-transition-old(root) {
+  z-index: 1;
+}
+html.theme-vt::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* Page-to-page (language switch) crossfade with a little lift. */
+::view-transition-old(root) {
+  animation: 0.35s var(--ease) both vt-out;
+}
+::view-transition-new(root) {
+  animation: 0.6s var(--ease) 0.1s both vt-in;
+}
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/* Terminal card idles with a slow float + sway so the hero never sits dead still. */
+.hero-float {
+  animation: hero-float 8s ease-in-out 2.6s infinite;
+  will-change: transform;
+}
+/* The whole card orbits: swings left/right, then tips top/bottom, in one loop. */
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: perspective(1100px) translate3d(0, 0, 0) rotateY(-24deg) rotateX(0deg);
+  }
+  25% {
+    transform: perspective(1100px) translate3d(0, -22px, 0) rotateY(0deg) rotateX(16deg);
+  }
+  50% {
+    transform: perspective(1100px) translate3d(0, 0, 0) rotateY(24deg) rotateX(0deg);
+  }
+  75% {
+    transform: perspective(1100px) translate3d(0, -22px, 0) rotateY(0deg) rotateX(-16deg);
+  }
+}
+
+/* Glow: a breathing accent halo behind the card plus a pulsing edge light. */
+.hero-float {
+  position: relative;
+  isolation: isolate;
+}
+.hero-float::before {
+  content: "";
+  position: absolute;
+  inset: -14% -12%;
+  z-index: -1;
+  border-radius: 3rem;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--accent) 80%, transparent), transparent 75%);
+  filter: blur(44px);
+  animation: hero-halo 5s ease-in-out infinite;
+}
+.hero-float .bezel {
+  animation: hero-edge 5s ease-in-out infinite;
+}
+.hero-float [data-count] {
+  animation: hero-num 5s ease-in-out infinite;
+}
+@keyframes hero-halo {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+@keyframes hero-edge {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px var(--bezel-ring), 0 0 18px -6px var(--glow);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--accent) 55%, var(--bezel-ring)),
+      0 0 90px 4px var(--glow);
+  }
+}
+@keyframes hero-num {
+  0%,
+  100% {
+    text-shadow: 0 0 0 transparent;
+  }
+  50% {
+    text-shadow: 0 0 22px color-mix(in oklab, var(--accent) 70%, transparent);
+  }
+}
+
+/* Reduced motion keeps this one ambient card alive, gently: the glow pulses as
+   usual (no movement), and the float shrinks to a few pixels with no rotation. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-float,
+  .hero-float::before,
+  .hero-float .bezel,
+  .hero-float [data-count] {
+    animation-iteration-count: infinite !important;
+  }
+  .hero-float {
+    animation-name: hero-float-calm;
+    animation-duration: 10s !important;
+    animation-delay: 0s !important;
+  }
+  .hero-float::before,
+  .hero-float .bezel,
+  .hero-float [data-count] {
+    animation-duration: 5s !important;
+  }
+}
+@keyframes hero-float-calm {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -16px, 0);
+  }
+}
+
+/* Light mode: a dark, moving shade around the card that follows the swing. */
+:root[data-theme="light"] .hero-float::before {
+  background: radial-gradient(closest-side, rgba(8, 24, 36, 0.55), transparent 75%);
+  filter: blur(40px);
+  animation: hero-shade-halo 8s ease-in-out 2.6s infinite;
+}
+:root[data-theme="light"] .hero-float .bezel {
+  animation: hero-shade 8s ease-in-out 2.6s infinite;
+}
+@keyframes hero-shade-halo {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translate(26px, 8px) scale(1);
+  }
+  25% {
+    opacity: 0.8;
+    transform: translate(0, 34px) scale(1.08);
+  }
+  50% {
+    opacity: 0.55;
+    transform: translate(-26px, 8px) scale(1);
+  }
+  75% {
+    opacity: 0.8;
+    transform: translate(0, -18px) scale(1.08);
+  }
+}
+@keyframes hero-shade {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px var(--bezel-ring), 36px 14px 60px -8px rgba(8, 24, 36, 0.55);
+  }
+  25% {
+    box-shadow: 0 0 0 1px var(--bezel-ring), 0 46px 70px -8px rgba(8, 24, 36, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 1px var(--bezel-ring), -36px 14px 60px -8px rgba(8, 24, 36, 0.55);
+  }
+  75% {
+    box-shadow: 0 0 0 1px var(--bezel-ring), 0 -30px 70px -8px rgba(8, 24, 36, 0.5);
+  }
+}
+
+/* Ticker rows: pure CSS so they run even if the script never loads. motion.ts
+   only adjusts playbackRate (scroll-velocity boost, hover slow-down). */
+.marquee-track {
+  animation: marquee 26s linear infinite;
+  will-change: transform;
+}
+.marquee-track[data-dir="-1"] {
+  animation-direction: reverse;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* The global reduced-motion rule freezes every animation; the ticker is the one
+   ambient strip we keep sliding, just slower. */
+@media (prefers-reduced-motion: reduce) {
   .marquee-track {
-    animation: none;
+    animation-duration: 70s !important;
+    animation-iteration-count: infinite !important;
   }
+}
+
+/* Every tilt card: the hero card's orbit + glow, scaled down so copy stays readable. */
+.card-float {
+  position: relative;
+  isolation: isolate;
+  height: 100%;
+  animation: card-orbit 9s ease-in-out var(--phase, 0s) infinite;
+  will-change: transform;
+}
+.card-float > .bezel {
+  height: 100%;
+  animation: hero-edge 5s ease-in-out var(--phase, 0s) infinite;
+}
+.card-float::before {
+  content: "";
+  position: absolute;
+  inset: -6% -4%;
+  z-index: -1;
+  border-radius: 2.5rem;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--accent) 55%, transparent), transparent 75%);
+  filter: blur(34px);
+  animation: hero-halo 5s ease-in-out var(--phase, 0s) infinite;
+}
+@keyframes card-orbit {
+  0%,
+  100% {
+    transform: perspective(1400px) translate3d(0, 0, 0) rotateY(-6deg) rotateX(0deg);
+  }
+  25% {
+    transform: perspective(1400px) translate3d(0, -10px, 0) rotateY(0deg) rotateX(4deg);
+  }
+  50% {
+    transform: perspective(1400px) translate3d(0, 0, 0) rotateY(6deg) rotateX(0deg);
+  }
+  75% {
+    transform: perspective(1400px) translate3d(0, -10px, 0) rotateY(0deg) rotateX(-4deg);
+  }
+}
+:root[data-theme="light"] .card-float::before {
+  background: radial-gradient(closest-side, rgba(8, 24, 36, 0.4), transparent 75%);
+  animation: hero-shade-halo 9s ease-in-out var(--phase, 0s) infinite;
+}
+:root[data-theme="light"] .card-float > .bezel {
+  animation: hero-shade 9s ease-in-out var(--phase, 0s) infinite;
 }

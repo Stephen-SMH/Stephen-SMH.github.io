@@ -1,0 +1,26 @@
+---
+import type { Dict } from "@/content";
+import Bezel from "./Bezel.astro";
+import Reveal from "./Reveal.astro";
+import Section from "./Section.astro";
+import SectionHead from "./SectionHead.astro";
+import TagList from "./TagList.astro";
+import { bentoSpan, bentoTone } from "./ui";
+
+const { skills } = Astro.props as { skills: Dict["skills"] };
+const n = skills.groups.length;
+---
+<Section id="skills">
+  <SectionHead title={skills.title} />
+  <div class="grid gap-4 md:grid-cols-12">
+    {skills.groups.map((g, i) => (
+      <Reveal variant="card" class={bentoSpan(i, n)}>
+        <Bezel lift tilt class="h-full" core={`flex h-full flex-col p-7 sm:p-8 ${bentoTone(i)}`}>
+          <h3 class="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">{g.title}</h3>
+          <p class="mt-3 max-w-[52ch] text-[14.5px] leading-relaxed text-ink-soft">{g.desc}</p>
+          <TagList tags={g.tags} class="mt-auto pt-7" />
+        </Bezel>
+      </Reveal>
+    ))}
+  </div>
+</Section>

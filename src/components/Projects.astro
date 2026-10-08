@@ -1,0 +1,44 @@
+---
+import type { Dict } from "@/content";
+import Badge from "./Badge.astro";
+import Bezel from "./Bezel.astro";
+import PlaceholderPill from "./PlaceholderPill.astro";
+import Reveal from "./Reveal.astro";
+import Section from "./Section.astro";
+import SectionHead from "./SectionHead.astro";
+import TagList from "./TagList.astro";
+import { bentoSpan, bentoTone } from "./ui";
+
+const { projects } = Astro.props as { projects: Dict["projects"] };
+const n = projects.items.length;
+---
+<Section id="projects">
+  <SectionHead eyebrow={projects.eyebrow} title={projects.title} />
+
+  <div class="grid gap-5 md:grid-cols-12 md:gap-6">
+    {projects.items.map((p, i) => (
+      <Reveal variant="card" class={bentoSpan(i, n)}>
+        <Bezel lift tilt class="h-full" core={`flex h-full flex-col p-8 sm:p-12 md:min-h-[26rem] ${bentoTone(i + 1)}`}>
+          <div class="flex items-start justify-between gap-4">
+            <p class="text-[13px] leading-snug text-ink-soft">{p.kicker}</p>
+            {p.placeholder ? <PlaceholderPill label={projects.placeholderLabel} /> : p.badge && <Badge>{p.badge}</Badge>}
+          </div>
+
+          <h3 class="mt-8 max-w-[26ch] font-display text-3xl font-semibold leading-[1.15] tracking-tight text-ink sm:text-[2.25rem]">{p.title}</h3>
+          <p class="mt-4 max-w-[58ch] text-base leading-relaxed sm:text-[17px] text-ink-soft">{p.desc}</p>
+
+          <dl class="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-rule pt-6">
+            {p.stats.map((s) => (
+              <div>
+                <dt data-count class="font-display text-3xl font-semibold tracking-tight text-accent">{s.value}</dt>
+                <dd class="mt-1 text-sm leading-snug text-ink-faint">{s.label}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <TagList tags={p.tags} class="mt-auto pt-7" />
+        </Bezel>
+      </Reveal>
+    ))}
+  </div>
+</Section>

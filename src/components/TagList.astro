@@ -1,0 +1,9 @@
+---
+import Tag from "./Tag.astro";
+const { tags, class: className = "mt-6" } = Astro.props as { tags: string[]; class?: string };
+---
+<ul class:list={[className, "flex flex-wrap gap-1.5"]} data-tags>
+  {tags.map((t) => (
+    <li><Tag>{t}</Tag></li>
+  ))}
+</ul>

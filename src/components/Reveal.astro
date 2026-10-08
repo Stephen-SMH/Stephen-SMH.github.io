@@ -1,0 +1,9 @@
+---
+/** Scroll-reveal wrapper; motion.ts animates `[data-reveal]` in as it enters view. */
+const { as: Comp = "div", variant = "", class: className } = Astro.props as {
+  as?: string;
+  variant?: "" | "card" | "fade" | "left";
+  class?: string;
+};
+---
+<Comp data-reveal={variant} class={className}><slot /></Comp>

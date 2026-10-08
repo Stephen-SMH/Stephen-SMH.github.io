@@ -1,0 +1,34 @@
+---
+import type { Dict } from "@/content";
+import Bezel from "./Bezel.astro";
+import PlaceholderPill from "./PlaceholderPill.astro";
+import Reveal from "./Reveal.astro";
+import Section from "./Section.astro";
+import SectionHead from "./SectionHead.astro";
+import TagList from "./TagList.astro";
+import { bentoSpan, bentoTone } from "./ui";
+
+const { notes } = Astro.props as { notes: Dict["notes"] };
+const n = notes.items.length;
+---
+<Section id="blog">
+  <SectionHead title={notes.title} />
+
+  <div class="grid gap-5 md:grid-cols-12 md:gap-6">
+    {notes.items.map((item, i) => (
+      <Reveal variant="card" class={bentoSpan(i, n)}>
+        <Bezel lift tilt class="h-full" core={`flex h-full flex-col p-8 sm:p-12 md:min-h-[26rem] ${bentoTone(i)}`}>
+          <div class="flex items-center justify-between gap-3">
+            <p class="font-mono text-[12px] text-ink-faint">
+              <time datetime={item.iso}>{item.date}</time> / {item.read}
+            </p>
+            {item.placeholder && <PlaceholderPill label={notes.placeholderLabel} />}
+          </div>
+          <h3 class="mt-8 max-w-[28ch] font-display text-3xl font-semibold leading-[1.15] tracking-tight text-ink sm:text-[2.25rem]">{item.title}</h3>
+          <p class="mt-4 flex-1 text-base leading-relaxed sm:text-[17px] text-ink-soft">{item.desc}</p>
+          <TagList tags={item.tags} />
+        </Bezel>
+      </Reveal>
+    ))}
+  </div>
+</Section>

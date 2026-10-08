@@ -1,0 +1,108 @@
+---
+import type { Dict } from "@/content";
+import ArrowIsland from "./ArrowIsland.astro";
+import Bezel from "./Bezel.astro";
+import MonoLabel from "./MonoLabel.astro";
+import Reveal from "./Reveal.astro";
+import Section from "./Section.astro";
+import SectionHead from "./SectionHead.astro";
+
+const { contact } = Astro.props as { contact: Dict["contact"] };
+const { form, direct, card } = contact;
+
+// The number is assembled at click time so it never appears in the page HTML.
+const field =
+  "w-full rounded-2xl bg-paper-sunken/60 px-4 py-3.5 text-[15px] text-ink ring-1 ring-inset ring-rule placeholder:text-ink-faint transition-shadow duration-500 outline-none focus:ring-2 focus:ring-accent";
+const rowBase =
+  "group flex items-center justify-between gap-4 rounded-2xl bg-paper-sunken/50 px-5 py-4 ring-1 ring-inset ring-rule transition-all duration-500 hover:bg-paper-sunken hover:ring-accent/40";
+const rowLabel = "text-[13px] text-ink-faint";
+const rowValue = "font-mono text-[13px] text-ink transition group-hover:text-accent";
+const lbl = "mb-2 block text-[13px] font-medium text-ink-soft";
+---
+<Section id="contact">
+  <SectionHead eyebrow={contact.eyebrow} title={contact.title} />
+
+  <div class="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+    <Reveal variant="card">
+      <Bezel core="p-7 sm:p-10">
+        <form
+          novalidate
+          data-contact-form
+          data-to={direct.email}
+          data-invalid={form.invalid}
+          data-opening={form.opening}
+          class="space-y-4"
+        >
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label for="name" class={lbl}>{form.name}</label>
+              <input id="name" name="name" required autocomplete="name" placeholder={form.namePh} class={field} />
+            </div>
+            <div>
+              <label for="email" class={lbl}>{form.email}</label>
+              <input id="email" name="email" type="email" required autocomplete="email" placeholder={form.emailPh} class={field} />
+            </div>
+          </div>
+          <div>
+            <label for="subject" class={lbl}>{form.subject}</label>
+            <input id="subject" name="subject" required placeholder={form.subjectPh} class={field} />
+          </div>
+          <div>
+            <label for="message" class={lbl}>{form.message}</label>
+            <textarea data-lenis-prevent id="message" name="message" rows="6" required placeholder={form.messagePh} class:list={[field, "resize-y"]}></textarea>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 pt-1">
+            <button type="submit" class="btn btn-primary">
+              {form.send}
+              <ArrowIsland />
+            </button>
+            <p aria-live="polite" data-form-status class="font-mono text-[12px]"></p>
+          </div>
+        </form>
+      </Bezel>
+    </Reveal>
+
+    <Reveal variant="card">
+      <Bezel class="h-full" core="core-accent p-7 sm:p-10">
+        <MonoLabel>{direct.title}</MonoLabel>
+        <ul class="mt-5 space-y-3">
+          <li>
+            <a href={`mailto:${direct.email}`} class={rowBase}>
+              <span class={rowLabel}>{direct.emailLabel}</span>
+              <span class={rowValue}>{direct.email}</span>
+            </a>
+          </li>
+          <li>
+            <a href={direct.githubUrl} target="_blank" rel="noreferrer noopener" class={rowBase}>
+              <span class={rowLabel}>{direct.githubLabel}</span>
+              <span class={rowValue}>{direct.github}</span>
+            </a>
+          </li>
+          <li>
+            <a href={direct.linkedinUrl} target="_blank" rel="noreferrer noopener" class={rowBase}>
+              <span class={rowLabel}>{direct.linkedinLabel}</span>
+              <span class={rowValue}>{direct.linkedin}</span>
+            </a>
+          </li>
+          <li>
+            <button type="button" data-phone-reveal aria-label={direct.revealAria} class:list={[rowBase, "w-full text-left"]}>
+              <span class={rowLabel}>{direct.phoneLabel}</span>
+              <span class="flex items-center gap-2">
+                <span data-phone-value class="select-none font-mono text-[13px] text-ink-soft" aria-hidden="true">{direct.phoneMasked}</span>
+                <span data-phone-hint class="font-mono text-[11px] text-accent transition-colors duration-500 group-hover:text-accent-soft-ink">{direct.reveal}</span>
+              </span>
+            </button>
+          </li>
+        </ul>
+        <p class="mt-3 px-1 font-mono text-[11px] text-ink-faint">{direct.hiddenNote}</p>
+
+        <div class="mt-6 rounded-2xl bg-paper-sunken/50 p-5 ring-1 ring-inset ring-rule">
+          <p class="font-mono text-[12px] text-ink-soft"><span class="text-accent">$</span> {card.locationCmd}</p>
+          <p class="mt-1.5 text-[13px] text-ink">{card.location}</p>
+          <p class="mt-3 font-mono text-[12px] text-ink-soft"><span class="text-accent">$</span> {card.availabilityCmd}</p>
+          <p class="mt-1.5 text-[13px] text-ink">{card.availability}</p>
+        </div>
+      </Bezel>
+    </Reveal>
+  </div>
+</Section>
