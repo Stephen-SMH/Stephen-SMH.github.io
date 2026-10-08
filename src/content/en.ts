@@ -581,5 +581,6 @@ export const en: Dict = {
     github: "GitHub",
     linkedin: "LinkedIn",
     email: "Email",
+    games: "Games",
   },
 };

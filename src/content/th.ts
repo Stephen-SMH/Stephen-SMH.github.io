@@ -60,5 +60,6 @@ export const th: DeepPartial<Dict> = {
     built: "สร้างด้วย Next.js, TypeScript และ Tailwind CSS",
     rights: "สงวนลิขสิทธิ์",
     email: "อีเมล",
+    games: "เกม",
   },
 };

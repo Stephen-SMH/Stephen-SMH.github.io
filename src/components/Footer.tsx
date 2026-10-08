@@ -1,5 +1,7 @@
 import type { Dict } from "@/content";
 
+const GAMES_URL = "https://stephen-smh.github.io/game-portfolio/";
+
 export function Footer({ dict }: { dict: Dict }) {
   const { footer, brand, nav, contact } = dict;
   const link = "transition hover:text-accent";
@@ -27,6 +29,9 @@ export function Footer({ dict }: { dict: Dict }) {
           </a>
           <a href={contact.direct.githubUrl} target="_blank" rel="noreferrer noopener" className={link}>
             {footer.github}
+          </a>
+          <a href={GAMES_URL} target="_blank" rel="noreferrer noopener" className={link}>
+            {footer.games}
           </a>
           <a href={contact.direct.linkedinUrl} target="_blank" rel="noreferrer noopener" className={link}>
             {footer.linkedin}

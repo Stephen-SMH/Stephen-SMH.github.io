@@ -146,7 +146,7 @@ export interface Dict {
     };
     card: { locationCmd: string; location: string; availabilityCmd: string; availability: string };
   };
-  footer: { built: string; rights: string; github: string; linkedin: string; email: string };
+  footer: { built: string; rights: string; github: string; linkedin: string; email: string; games: string };
 }
 
 export type DeepPartial<T> = T extends (infer U)[]

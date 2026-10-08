@@ -60,5 +60,6 @@ export const my: DeepPartial<Dict> = {
     built: "Next.js, TypeScript နှင့် Tailwind CSS ဖြင့် တည်ဆောက်ထားသည်။",
     rights: "မူပိုင်ခွင့်ရယူထားပါသည်။",
     email: "အီးမေးလ်",
+    games: "ဂိမ်းများ",
   },
 };
