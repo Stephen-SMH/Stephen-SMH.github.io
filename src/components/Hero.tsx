@@ -1,134 +1,144 @@
+import { ArrowDown, DownloadSimple, GithubLogo, LinkedinLogo } from "@phosphor-icons/react/dist/ssr";
 import type { Dict } from "@/content";
 import { Reveal } from "./Reveal";
+import { ArrowIsland, Bezel } from "./ui";
 
 export function Hero({ hero, contact }: { hero: Dict["hero"]; contact: Dict["contact"]["direct"] }) {
   const t = hero.terminal;
-  const ghost =
-    "rounded-full border border-rule px-3 py-2.5 font-mono text-[12px] text-ink-soft transition hover:border-ink-soft hover:text-ink";
+  const words = hero.name.split(" ");
+  const social =
+    "inline-flex items-center gap-2 rounded-full px-3 py-2 text-[13px] text-ink-soft transition-colors duration-500 hover:text-ink";
 
   return (
-    <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
-      {/* Decorative: masked line grid + two slowly drifting accent orbs (flat fills, blurred). */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="grid-backdrop absolute inset-0 opacity-[0.35]" />
-        <div className="absolute -top-40 left-1/2 h-[38rem] w-[38rem] -translate-x-1/2 animate-drift rounded-full bg-accent/12 blur-[120px]" />
-        <div className="absolute -right-24 top-32 h-[26rem] w-[26rem] rounded-full bg-accent/8 blur-[110px]" />
-      </div>
+    <>
+      <section className="relative flex min-h-[100dvh] items-center overflow-hidden pb-16 pt-24">
+        {/* Ambient depth: masked grid and two slow orbs. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+          <div className="grid-backdrop absolute inset-0 opacity-60" />
+          <div className="absolute -top-48 left-[8%] h-[40rem] w-[40rem] animate-drift rounded-full bg-accent/15 blur-[140px]" />
+          <div className="absolute -right-32 top-1/3 h-[30rem] w-[30rem] rounded-full bg-accent/10 blur-[130px]" />
+        </div>
 
-      <div className="mx-auto w-full max-w-[1180px] px-5 sm:px-7">
-        <div className="grid gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-          <div>
-            <Reveal>
-              <span className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-accent-soft-ink">
-                <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
-                </span>
-                {hero.available}
-              </span>
-            </Reveal>
-
-            <Reveal delay={80}>
-              <h1 className="mt-7 font-display text-[clamp(2.4rem,5.2vw,3.8rem)] font-extrabold leading-[1.06] tracking-[-0.015em] text-ink text-balance">
-                {hero.name}
-              </h1>
-            </Reveal>
-
-            <Reveal delay={140}>
-              <p className="mt-4 font-mono text-sm text-accent sm:text-base">
-                {hero.role}
-                <span className="text-ink-faint"> · </span>
-                <span className="text-ink-soft">{hero.focus}</span>
-              </p>
-            </Reveal>
-
-            <Reveal delay={200}>
-              <p className="mt-7 max-w-xl text-lg leading-relaxed text-ink text-balance">{hero.statement}</p>
-            </Reveal>
-
-            <Reveal delay={260}>
-              <div className="mt-9 flex flex-wrap items-center gap-3">
-                <a
-                  href="#projects"
-                  className="group inline-flex items-center gap-2 rounded-full border border-accent bg-accent px-5 py-3 text-sm font-semibold text-accent-ink transition hover:opacity-90"
-                >
-                  {hero.viewWork}
-                  <span className="transition group-hover:translate-x-0.5" aria-hidden="true">
-                    →
+        <div className="mx-auto w-full max-w-[1240px] px-5 sm:px-8">
+          <div className="grid gap-16 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
+            <div>
+              <Reveal>
+                <span className="eyebrow !normal-case !tracking-normal text-accent-soft-ink">
+                  <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-70" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
                   </span>
-                </a>
-                <a
-                  href="/cv.pdf"
-                  download
-                  className="inline-flex items-center gap-2 rounded-full border border-rule px-5 py-3 text-sm font-semibold text-ink transition hover:border-accent/40"
-                >
-                  {hero.downloadCv}
-                  <span className="font-mono text-[11px] font-normal text-ink-soft">{hero.cvType}</span>
-                </a>
-                <div className="flex items-center gap-2 pl-1">
-                  <a href={contact.githubUrl} target="_blank" rel="noreferrer noopener" className={ghost}>
-                    {contact.githubLabel}
-                  </a>
-                  <a href={contact.linkedinUrl} target="_blank" rel="noreferrer noopener" className={ghost}>
-                    {contact.linkedinLabel}
-                  </a>
-                </div>
-              </div>
-            </Reveal>
+                  {hero.available}
+                </span>
+              </Reveal>
 
-            <Reveal delay={320}>
-              <ul className="mt-10 flex flex-wrap gap-2">
-                {hero.tags.map((tag) => (
-                  <li
-                    key={tag}
-                    className="rounded-md border border-rule bg-paper-raised px-2.5 py-1 font-mono text-[11px] text-ink-soft"
-                  >
-                    {tag}
-                  </li>
+              <h1 className="mt-8 font-display text-[clamp(3.25rem,10.5vw,8.75rem)] font-semibold leading-[0.92] tracking-tighter text-ink">
+                {words.map((w, i) => (
+                  <span key={`${w}-${i}`}>
+                    <span className="word-mask">
+                      <span style={{ animationDelay: `${120 + i * 110}ms` }}>{w}</span>
+                    </span>{" "}
+                  </span>
                 ))}
-              </ul>
+              </h1>
+
+              <Reveal delay={420}>
+                <p className="mt-8 font-mono text-sm text-accent sm:text-[15px]">
+                  {hero.role}
+                  <span className="text-ink-faint"> · </span>
+                  <span className="text-ink-soft">{hero.focus}</span>
+                </p>
+                <p className="mt-5 max-w-[34ch] text-xl leading-snug tracking-tight text-ink sm:text-2xl">
+                  {hero.statement}
+                </p>
+              </Reveal>
+
+              <Reveal delay={560}>
+                <div className="mt-10 flex flex-wrap items-center gap-3">
+                  <a href="#projects" className="btn btn-primary">
+                    {hero.viewWork}
+                    <span className="btn-icon" aria-hidden="true">
+                      <ArrowDown size={16} weight="light" />
+                    </span>
+                  </a>
+                  <a href="/cv.pdf" download className="btn btn-ghost">
+                    {hero.downloadCv}
+                    <span className="btn-icon" aria-hidden="true">
+                      <DownloadSimple size={16} weight="light" />
+                    </span>
+                  </a>
+                  <div className="flex items-center sm:ml-2">
+                    <a href={contact.githubUrl} target="_blank" rel="noreferrer noopener" className={social}>
+                      <GithubLogo size={18} weight="light" aria-hidden="true" />
+                      {contact.githubLabel}
+                    </a>
+                    <a href={contact.linkedinUrl} target="_blank" rel="noreferrer noopener" className={social}>
+                      <LinkedinLogo size={18} weight="light" aria-hidden="true" />
+                      {contact.linkedinLabel}
+                    </a>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+
+            <Reveal delay={300}>
+              <Bezel className="lg:rotate-[1.6deg] lg:hover:rotate-0" coreClassName="core-accent">
+                <div className="p-6 sm:p-8">
+                  <p className="font-mono text-[12px] text-ink-faint">{t.file}</p>
+                  <div className="mt-6 space-y-2 font-mono text-[13px]">
+                    <p className="text-ink-faint">
+                      <span className="text-accent">$</span> {t.whoamiCmd}
+                    </p>
+                    <p className="text-ink">{t.whoami}</p>
+                  </div>
+                  <p className="mt-7 font-mono text-[13px] text-ink-faint">
+                    <span className="text-accent">$</span> {t.statsCmd}
+                  </p>
+                  <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-7">
+                    {t.stats.map((s) => (
+                      <div key={s.label}>
+                        <dt className="font-display text-5xl font-semibold tracking-tighter text-ink">{s.value}</dt>
+                        <dd className="mt-1.5 text-[12.5px] leading-snug text-ink-soft">{s.label}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="mt-8 font-mono text-[13px] text-ink-faint">
+                    <span className="text-accent">$</span> {t.availabilityCmd}
+                  </p>
+                  <p className="mt-2 font-mono text-[13px] text-ink-soft">
+                    {t.availability}
+                    <span
+                      className="ml-1 inline-block h-3.5 w-2 translate-y-0.5 animate-blink bg-accent/80"
+                      aria-hidden="true"
+                    />
+                  </p>
+                </div>
+              </Bezel>
             </Reveal>
           </div>
+        </div>
+      </section>
 
-          <Reveal delay={200}>
-            <div className="card shadow-float">
-              <div className="flex items-center gap-2 border-b border-rule px-4 py-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-rule" aria-hidden="true" />
-                <span className="h-2.5 w-2.5 rounded-full bg-rule" aria-hidden="true" />
-                <span className="h-2.5 w-2.5 rounded-full bg-rule" aria-hidden="true" />
-                <span className="ml-2 font-mono text-[11px] text-ink-faint">{t.file}</span>
-              </div>
-              <div className="space-y-3 px-5 py-5 font-mono text-[13px]">
-                <p className="text-ink-faint">
-                  <span className="text-accent">$</span> {t.whoamiCmd}
-                </p>
-                <p className="text-ink">{t.whoami}</p>
-                <p className="pt-2 text-ink-faint">
-                  <span className="text-accent">$</span> {t.statsCmd}
-                </p>
-                <dl className="grid grid-cols-2 gap-x-4 gap-y-4 pt-1">
-                  {t.stats.map((s) => (
-                    <div key={s.label}>
-                      <dt className="text-2xl font-semibold tracking-tight text-accent">{s.value}</dt>
-                      <dd className="mt-1 text-[11px] leading-snug text-ink-soft">{s.label}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <p className="pt-3 text-ink-faint">
-                  <span className="text-accent">$</span> {t.availabilityCmd}
-                </p>
-                <p className="text-ink-soft">
-                  {t.availability}
-                  <span
-                    className="ml-1 inline-block h-3.5 w-2 translate-y-0.5 animate-blink bg-accent/80"
-                    aria-hidden="true"
-                  />
-                </p>
-              </div>
-            </div>
-          </Reveal>
+      {/* The one marquee on the page: the stack, drifting under the hero. */}
+      <div
+        className="marquee relative overflow-hidden py-6 [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]"
+        aria-label={hero.tags.join(", ")}
+      >
+        <div className="marquee-track flex w-max" aria-hidden="true">
+          {[0, 1].map((k) => (
+            <ul key={k} className="flex shrink-0 gap-3 pr-3">
+              {hero.tags.map((tag) => (
+                <li
+                  key={`${k}-${tag}`}
+                  className="rounded-full px-5 py-2.5 font-mono text-[13px] text-ink-soft ring-1 ring-inset ring-rule"
+                >
+                  {tag}
+                </li>
+              ))}
+            </ul>
+          ))}
         </div>
       </div>
-    </section>
+    </>
   );
 }

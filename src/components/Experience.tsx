@@ -5,45 +5,40 @@ import { Section, SectionHead, TagList } from "./ui";
 export function Experience({ experience }: { experience: Dict["experience"] }) {
   return (
     <Section id="experience">
-      <SectionHead n="03" eyebrow={experience.eyebrow} title={experience.title} />
+      <SectionHead title={experience.title} />
 
-      <ol className="relative space-y-12 border-l border-rule pl-6 sm:pl-10">
+      <ol>
         {experience.items.map((job, i) => (
-          <Reveal as="li" key={`${job.org}-${job.period}`} delay={i === 0 ? 0 : 80} className="relative">
-            <span
-              aria-hidden="true"
-              className="absolute -left-[27px] top-1.5 flex h-3 w-3 items-center justify-center sm:-left-[43px]"
-            >
-              <span className="h-3 w-3 rounded-full border border-accent/60 bg-paper" />
-              <span className="absolute h-1.5 w-1.5 rounded-full bg-accent" />
-            </span>
-
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-              <h3 className="text-xl font-semibold text-ink">
-                {job.role}
-                <span className="text-ink-faint"> @ </span>
-                <span className="text-accent">{job.org}</span>
+          <Reveal
+            as="li"
+            key={`${job.org}-${job.period}`}
+            className={`grid gap-6 py-12 md:grid-cols-[0.34fr_0.66fr] md:gap-12 ${i === 0 ? "" : "border-t border-rule"}`}
+          >
+            <div className="md:sticky md:top-28 md:self-start">
+              <p className="font-mono text-[13px] text-accent">{job.period}</p>
+              <h3 className="mt-3 font-display text-2xl font-semibold leading-tight tracking-tight text-ink">
+                {job.org}
               </h3>
-              <p className="font-mono text-[12px] text-ink-soft">
-                {[job.period, job.place].filter(Boolean).join(" · ")}
-              </p>
+              {(job.place || job.kind) && (
+                <p className="mt-2 text-[13.5px] leading-snug text-ink-soft">
+                  {[job.place, job.kind].filter(Boolean).join(", ")}
+                </p>
+              )}
             </div>
 
-            {job.kind && (
-              <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">{job.kind}</p>
-            )}
-            <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-ink">{job.summary}</p>
-
-            <ul className="mt-5 space-y-3">
-              {job.bullets.map((b) => (
-                <li key={b} className="flex gap-3 text-[13.5px] leading-[1.75] text-ink-soft">
-                  <span aria-hidden="true" className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-accent/70" />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-
-            <TagList tags={job.tags} />
+            <div>
+              <h4 className="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">{job.role}</h4>
+              <p className="mt-4 max-w-[62ch] text-[16px] leading-[1.75] text-ink">{job.summary}</p>
+              <ul className="mt-6 space-y-3.5">
+                {job.bullets.map((b) => (
+                  <li key={b} className="flex gap-4 text-[14.5px] leading-[1.75] text-ink-soft">
+                    <span aria-hidden="true" className="mt-[0.8em] h-px w-4 shrink-0 bg-accent" />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+              <TagList tags={job.tags} />
+            </div>
           </Reveal>
         ))}
       </ol>

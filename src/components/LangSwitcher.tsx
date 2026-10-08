@@ -3,11 +3,7 @@ import { localeMeta, locales, type Locale } from "@/content";
 
 export function LangSwitcher({ current, label }: { current: Locale; label: string }) {
   return (
-    <div
-      role="group"
-      aria-label={label}
-      className="flex items-center rounded-full border border-rule bg-paper-raised p-0.5 font-mono text-[11px]"
-    >
+    <div role="group" aria-label={label} className="flex items-center rounded-full bg-ink/6 p-0.5 font-mono text-[11px]">
       {locales.map((l) => {
         const active = l === current;
         return (
@@ -19,8 +15,8 @@ export function LangSwitcher({ current, label }: { current: Locale; label: strin
             aria-label={localeMeta[l].name}
             title={localeMeta[l].name}
             aria-current={active ? "true" : undefined}
-            className={`rounded-full px-2 py-1 transition sm:px-2.5 ${
-              active ? "bg-accent-soft text-accent-soft-ink" : "text-ink-soft hover:text-ink"
+            className={`rounded-full px-2 py-1.5 transition-colors duration-500 sm:px-2.5 ${
+              active ? "bg-ink/12 text-ink" : "text-ink-soft hover:text-ink"
             }`}
           >
             {localeMeta[l].label}

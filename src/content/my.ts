@@ -1,7 +1,7 @@
 import type { DeepPartial, Dict } from "./types";
 
 /**
- * Burmese — interface labels only. Body copy (bio, experience, projects) falls
+ * Burmese - interface labels only. Body copy (bio, experience, projects) falls
  * back to English until translated. TODO: have a native reader review.
  */
 export const my: DeepPartial<Dict> = {

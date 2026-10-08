@@ -1,7 +1,7 @@
 import type { DeepPartial, Dict } from "./types";
 
 /**
- * Thai — interface labels only. Body copy (bio, experience, projects) falls
+ * Thai - interface labels only. Body copy (bio, experience, projects) falls
  * back to English until translated. TODO: have a native reader review.
  */
 export const th: DeepPartial<Dict> = {

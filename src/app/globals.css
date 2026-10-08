@@ -1,18 +1,29 @@
 @import "tailwindcss";
 
+:root {
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 /* ==========================================================================
    1. TOKENS — the only place colour literals live.
    Dark is the default; the toggle sets <html data-theme="dark|light">.
    ========================================================================== */
 :root {
   color-scheme: dark;
-  --paper: #0b0e11;
-  --paper-raised: #171c21;
-  --paper-sunken: #23292f;
-  --ink: #e2e7e9;
-  --ink-soft: #819098;
-  --ink-faint: #5c6970;
-  --rule: #2b333b;
+  --paper: #05070a;
+  --paper-raised: #0b0f14;
+  --paper-sunken: #10151b;
+  --ink: #e8edef;
+  --ink-soft: #94a2a9;
+  --ink-faint: #66747b;
+  --rule: rgba(255, 255, 255, 0.08);
+  --core: #0a0d11;
+  --core-hi: rgba(255, 255, 255, 0.09);
+  --bezel-shell: rgba(255, 255, 255, 0.04);
+  --bezel-ring: rgba(255, 255, 255, 0.09);
+  --glass: rgba(10, 14, 18, 0.62);
+  --glow: rgba(45, 169, 210, 0.28);
+  --grain: 0.035;
   --accent: #2da9d2;
   --accent-ink: #071820;
   --accent-soft: rgba(45, 169, 210, 0.16);
@@ -35,18 +46,25 @@
   --orange-ink: #2b1300;
   --orange-soft: rgba(240, 153, 66, 0.16);
   --orange-soft-ink: #f8c48f;
-  --shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 30px 60px -24px rgba(0, 0, 0, 0.7);
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --paper: #fdfdfc;
+  --paper: #f1f3f4;
   --paper-raised: #ffffff;
-  --paper-sunken: #f1f3f4;
-  --ink: #21282c;
-  --ink-soft: #5c6970;
-  --ink-faint: #8a949b;
-  --rule: #dce2e5;
+  --paper-sunken: #e8ebed;
+  --ink: #14191c;
+  --ink-soft: #4f5d64;
+  --ink-faint: #7a878e;
+  --rule: rgba(15, 30, 40, 0.09);
+  --core: #ffffff;
+  --core-hi: rgba(255, 255, 255, 1);
+  --bezel-shell: rgba(15, 30, 40, 0.04);
+  --bezel-ring: rgba(15, 30, 40, 0.07);
+  --glass: rgba(255, 255, 255, 0.7);
+  --glow: rgba(26, 109, 137, 0.2);
+  --grain: 0.05;
   --accent: #1a6d89;
   --accent-ink: #ffffff;
   --accent-soft: rgba(26, 109, 137, 0.1);
@@ -69,7 +87,7 @@
   --orange-ink: #ffffff;
   --orange-soft: rgba(230, 107, 25, 0.12);
   --orange-soft-ink: #9c4a10;
-  --shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow: 0 0 0 1px rgba(15, 30, 40, 0.06), 0 30px 60px -28px rgba(26, 60, 80, 0.22);
 }
 
 /* ==========================================================================
@@ -83,6 +101,8 @@
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
   --color-rule: var(--rule);
+  --color-core: var(--core);
+  --color-glass: var(--glass);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
@@ -108,14 +128,15 @@
 
   --shadow-float: var(--shadow);
 
-  --font-sans: var(--font-inter), var(--font-noto-thai), var(--font-noto-myanmar), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
-  --font-display: var(--font-jakarta), var(--font-inter), var(--font-noto-thai), var(--font-noto-myanmar), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), var(--font-noto-thai), var(--font-noto-myanmar), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: var(--font-geist), var(--font-noto-thai), var(--font-noto-myanmar), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme {
   --animate-blink: blink 1.1s step-end infinite;
-  --animate-drift: drift 24s ease-in-out infinite;
+  --animate-drift: drift 24s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  --animate-marquee: marquee 55s linear infinite;
 
   @keyframes blink {
     0%,
@@ -124,6 +145,11 @@
     }
     50% {
       opacity: 0;
+    }
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
     }
   }
   @keyframes drift {
@@ -140,10 +166,21 @@
 @keyframes reveal {
   0% {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(56px);
+    filter: blur(10px);
   }
   100% {
     opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(110%);
+  }
+  100% {
     transform: none;
   }
 }
@@ -159,19 +196,31 @@ html {
 body {
   background-color: var(--paper);
   color: var(--ink);
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   transition:
-    background-color 0.15s,
-    color 0.15s;
+    background-color 0.5s var(--ease),
+    color 0.5s var(--ease);
 }
 
 h1,
 h2,
 h3 {
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Thai / Burmese stack tall combining marks, so tight leading and negative
+   tracking from the latin display scale would clip them. */
+:lang(th) [class*="tracking-"],
+:lang(my) [class*="tracking-"] {
+  letter-spacing: normal;
+}
+:lang(th) h2,
+:lang(my) h2 {
+  line-height: 1.3 !important;
 }
 
 /* Wide tracking and forced caps pull Thai / Burmese combining marks apart. */
@@ -214,7 +263,7 @@ h3 {
 }
 .js [data-reveal="shown"] {
   opacity: 1;
-  animation: reveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: reveal 1s var(--ease) forwards;
 }
 
 /* Theme-toggle icon swap is CSS-only so SSR + pre-hydration script never flash. */
@@ -232,38 +281,156 @@ h3 {
    4. COMPONENTS
    ========================================================================== */
 @layer components {
-  /* Flat raised surface with a hairline border. */
-  .card {
+  /* Double bezel: an outer shell (the tray) around an inner core (the plate). */
+  .bezel {
     position: relative;
-    background-color: var(--paper-raised);
-    border: 1px solid var(--rule);
-    border-radius: 16px;
-  }
-
-  /* The reference's card "glow": lift 4px, border warms to accent @ 40%,
-     surface picks up a faint accent tint. */
-  .card-hover {
+    padding: 6px;
+    border-radius: 2rem;
+    background-color: var(--bezel-shell);
+    box-shadow: 0 0 0 1px var(--bezel-ring);
     transition:
-      transform 0.3s,
-      border-color 0.3s,
-      background-color 0.3s;
+      transform 0.8s var(--ease),
+      box-shadow 0.8s var(--ease);
   }
-  .card-hover:hover {
-    transform: translateY(-0.25rem);
-    border-color: color-mix(in oklab, var(--accent) 40%, transparent);
-    background-color: color-mix(in oklab, var(--paper-raised) 94%, var(--accent));
+  .bezel-core {
+    height: 100%;
+    border-radius: calc(2rem - 6px);
+    background-color: var(--core);
+    box-shadow: inset 0 1px 1px var(--core-hi);
+    overflow: hidden;
+  }
+  .bezel-lift:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--accent) 38%, var(--bezel-ring)),
+      0 36px 70px -34px var(--glow);
+  }
+  /* Surface variety inside bento cells (not everything is the same plate). */
+  .core-accent {
+    background-image: radial-gradient(120% 90% at 100% 0%, color-mix(in oklab, var(--accent) 20%, transparent), transparent 62%);
+  }
+  .core-grid {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--ink) 3.5%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--ink) 3.5%, transparent) 1px, transparent 1px);
+    background-size: 36px 36px;
   }
 
-  /* Faint line grid behind the hero, fading out toward the bottom. */
+  /* Floating glass island (nav, pills). */
+  .glass {
+    background-color: var(--glass);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+    box-shadow:
+      0 0 0 1px var(--bezel-ring),
+      inset 0 1px 1px var(--core-hi),
+      0 20px 50px -24px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Button with a nested icon island. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    white-space: nowrap;
+    border-radius: 9999px;
+    padding: 0.375rem 0.375rem 0.375rem 1.4rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition:
+      transform 0.6s var(--ease),
+      background-color 0.6s var(--ease),
+      box-shadow 0.6s var(--ease);
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn-primary {
+    background-color: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: 0 14px 32px -14px var(--glow);
+  }
+  .btn-primary:hover {
+    background-color: color-mix(in oklab, var(--accent) 88%, white);
+  }
+  .btn-ghost {
+    color: var(--ink);
+    background-color: var(--bezel-shell);
+    box-shadow: 0 0 0 1px var(--bezel-ring);
+  }
+  .btn-ghost:hover {
+    background-color: color-mix(in oklab, var(--ink) 8%, transparent);
+  }
+  .btn-icon {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    background-color: rgba(0, 0, 0, 0.12);
+    transition: transform 0.6s var(--ease);
+  }
+  .btn-ghost .btn-icon {
+    background-color: color-mix(in oklab, var(--ink) 10%, transparent);
+  }
+  .btn:hover .btn-icon {
+    transform: translate(2px, -1px) scale(1.06);
+  }
+
+  /* Small tracked label above a heading; used sparingly. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.35rem 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background-color: var(--bezel-shell);
+    box-shadow: 0 0 0 1px var(--bezel-ring);
+  }
+
+  .word-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+  }
+  .word-mask > span {
+    display: inline-block;
+    transform: translateY(110%);
+    animation: rise 1.3s var(--ease) forwards;
+  }
+
+  .marquee-track {
+    animation: var(--animate-marquee);
+  }
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
   .grid-backdrop {
     background-image:
-      linear-gradient(to right, color-mix(in oklab, var(--rule) 55%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--rule) 55%, transparent) 1px, transparent 1px);
-    background-size: 64px 64px;
-    /* A mask reads alpha only, so any opaque token works here. */
-    -webkit-mask-image: radial-gradient(ellipse at 50% 0%, var(--paper), transparent 72%);
-    mask-image: radial-gradient(ellipse at 50% 0%, var(--paper), transparent 72%);
+      linear-gradient(to right, color-mix(in oklab, var(--ink) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--ink) 7%, transparent) 1px, transparent 1px);
+    background-size: 72px 72px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000, transparent 70%);
+    mask-image: radial-gradient(ellipse at 50% 0%, #000, transparent 70%);
   }
+}
+
+/* Fixed grain overlay: never attached to scrolling content. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -282,7 +449,14 @@ h3 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .card-hover:hover {
+  .bezel-lift:hover {
     transform: none;
+  }
+  .word-mask > span {
+    transform: none;
+    animation: none;
+  }
+  .marquee-track {
+    animation: none;
   }
 }

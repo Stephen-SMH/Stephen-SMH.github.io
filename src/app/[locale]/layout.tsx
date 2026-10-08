@@ -1,20 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  Inter,
-  JetBrains_Mono,
-  Noto_Sans_Myanmar,
-  Noto_Sans_Thai,
-  Plus_Jakarta_Sans,
-} from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_Myanmar, Noto_Sans_Thai } from "next/font/google";
 import "../globals.css";
 import { getDict, localeMeta, locales, type Locale } from "@/content";
 import { themeScript } from "@/lib/theme-script";
 import { RevealObserver } from "@/components/RevealObserver";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
-const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta", display: "swap" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
 // Glyph fallbacks for the Thai / Burmese locales; not preloaded for English.
 const thai = Noto_Sans_Thai({
   subsets: ["thai"],
@@ -62,7 +55,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const fonts = [inter, jetbrains, jakarta, thai, myanmar].map((f) => f.variable).join(" ");
+  const fonts = [geist, geistMono, thai, myanmar].map((f) => f.variable).join(" ");
 
   return (
     // data-theme / class="js" are set by the inline script before hydration.
@@ -71,6 +64,7 @@ export default async function LocaleLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="font-sans antialiased">
+        <div className="grain" aria-hidden="true" />
         {children}
         <RevealObserver />
       </body>

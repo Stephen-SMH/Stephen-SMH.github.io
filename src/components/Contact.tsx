@@ -3,14 +3,14 @@
 import { useState, type FormEvent } from "react";
 import type { Dict } from "@/content";
 import { Reveal } from "./Reveal";
-import { MonoLabel, Section, SectionHead } from "./ui";
+import { ArrowIsland, Bezel, MonoLabel, Section, SectionHead } from "./ui";
 
 // The number is assembled at click time so it never appears in the page HTML.
 const PHONE = [48, 57, 51, 45, 55, 49, 53, 45, 53, 56, 51, 55];
 const decodePhone = () => String.fromCharCode(...PHONE);
 
 const field =
-  "w-full rounded-xl border border-rule bg-paper px-4 py-3 text-sm text-ink placeholder:text-ink-faint transition outline-none focus:border-accent focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-0 focus-visible:outline-accent";
+  "w-full rounded-2xl bg-paper-sunken/60 px-4 py-3.5 text-[15px] text-ink ring-1 ring-inset ring-rule placeholder:text-ink-faint transition-shadow duration-500 outline-none focus:ring-2 focus:ring-accent";
 
 export function Contact({
   contact,
@@ -41,27 +41,27 @@ export function Contact({
   };
 
   const rowBase =
-    "group flex items-center justify-between rounded-xl border border-rule bg-paper px-4 py-3 transition hover:border-accent/40";
-  const rowLabel = "font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint";
+    "group flex items-center justify-between gap-4 rounded-2xl bg-paper-sunken/50 px-5 py-4 ring-1 ring-inset ring-rule transition-all duration-500 hover:bg-paper-sunken hover:ring-accent/40";
+  const rowLabel = "text-[13px] text-ink-faint";
   const rowValue = "font-mono text-[13px] text-ink transition group-hover:text-accent";
 
   return (
     <Section id="contact">
-      <SectionHead n="06" eyebrow={contact.eyebrow} title={contact.title} />
+      <SectionHead eyebrow={contact.eyebrow} title={contact.title} />
 
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
         <Reveal>
-          <div className="card p-6 sm:p-8">
+          <Bezel coreClassName="p-7 sm:p-10">
             <form noValidate onSubmit={onSubmit} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="name" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
+                  <label htmlFor="name" className="mb-2 block text-[13px] font-medium text-ink-soft">
                     {form.name}
                   </label>
                   <input id="name" name="name" required autoComplete="name" placeholder={form.namePh} className={field} />
                 </div>
                 <div>
-                  <label htmlFor="email" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
+                  <label htmlFor="email" className="mb-2 block text-[13px] font-medium text-ink-soft">
                     {form.email}
                   </label>
                   <input
@@ -76,13 +76,13 @@ export function Contact({
                 </div>
               </div>
               <div>
-                <label htmlFor="subject" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
+                <label htmlFor="subject" className="mb-2 block text-[13px] font-medium text-ink-soft">
                   {form.subject}
                 </label>
                 <input id="subject" name="subject" required placeholder={form.subjectPh} className={field} />
               </div>
               <div>
-                <label htmlFor="message" className="mb-2 block font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
+                <label htmlFor="message" className="mb-2 block text-[13px] font-medium text-ink-soft">
                   {form.message}
                 </label>
                 <textarea
@@ -95,12 +95,9 @@ export function Contact({
                 />
               </div>
               <div className="flex flex-wrap items-center gap-4 pt-1">
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-2 rounded-full border border-accent bg-accent px-5 py-3 text-sm font-semibold text-accent-ink transition hover:opacity-90"
-                >
+                <button type="submit" className="btn btn-primary">
                   {form.send}
-                  <span aria-hidden="true">→</span>
+                  <ArrowIsland />
                 </button>
                 <p aria-live="polite" className="font-mono text-[12px]">
                   {status?.kind === "error" && (
@@ -112,11 +109,11 @@ export function Contact({
                 </p>
               </div>
             </form>
-          </div>
+          </Bezel>
         </Reveal>
 
         <Reveal delay={100}>
-          <div className="card h-full p-6 sm:p-8">
+          <Bezel className="h-full" coreClassName="core-accent p-7 sm:p-10">
             <MonoLabel>{direct.title}</MonoLabel>
             <ul className="mt-5 space-y-3">
               <li>
@@ -155,7 +152,7 @@ export function Contact({
                       <span className="select-none font-mono text-[13px] text-ink-soft" aria-hidden="true">
                         {direct.phoneMasked}
                       </span>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent transition group-hover:text-accent-soft-ink">
+                      <span className="font-mono text-[11px] text-accent transition-colors duration-500 group-hover:text-accent-soft-ink">
                         {direct.reveal}
                       </span>
                     </span>
@@ -165,7 +162,7 @@ export function Contact({
             </ul>
             <p className="mt-3 px-1 font-mono text-[11px] text-ink-faint">{direct.hiddenNote}</p>
 
-            <div className="mt-6 rounded-xl border border-rule bg-paper p-4">
+            <div className="mt-6 rounded-2xl bg-paper-sunken/50 p-5 ring-1 ring-inset ring-rule">
               <p className="font-mono text-[12px] text-ink-soft">
                 <span className="text-accent">$</span> {card.locationCmd}
               </p>
@@ -175,7 +172,7 @@ export function Contact({
               </p>
               <p className="mt-1.5 text-[13px] text-ink">{card.availability}</p>
             </div>
-          </div>
+          </Bezel>
         </Reveal>
       </div>
     </Section>

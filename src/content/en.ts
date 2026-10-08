@@ -1,15 +1,15 @@
 import type { Dict } from "./types";
 
 /**
- * English content — the source of truth. `my.ts` / `th.ts` override only what
+ * English content - the source of truth. `my.ts` / `th.ts` override only what
  * they translate; everything else falls back to this file.
  *
  * Source: SoeMoeHtetStephenResumev2.pdf. Anything NOT in the resume is copied
- * from the reference portfolio and tagged `PLACEHOLDER` — grep for it.
+ * from the reference portfolio and tagged `PLACEHOLDER` - grep for it.
  */
 export const en: Dict = {
   meta: {
-    title: "Soe Moe Htet — Software Engineer",
+    title: "Soe Moe Htet - Software Engineer",
     description:
       "AI-integrated software engineer building production services and agentic AI systems with CopilotKit, A2A and AG-UI. TypeScript, Python, FastAPI, React, Docker.",
   },
@@ -33,13 +33,13 @@ export const en: Dict = {
     role: "Software Engineer",
     focus: "Agentic AI & production services · TypeScript · Python · FastAPI",
     statement:
-      "I build production services and agentic AI products end to end — from the data model and API to a deployed React and TypeScript interface.",
+      "I build production services and agentic AI products end to end - from the data model and API to a deployed React and TypeScript interface.",
     viewWork: "View work",
     downloadCv: "Download CV",
     cvType: "PDF",
     tags: ["TypeScript", "Python", "FastAPI", "React", "PostgreSQL", "Docker", "CopilotKit", "A2A", "AG-UI"],
     terminal: {
-      file: "stephen-smh — shipped.log",
+      file: "stephen-smh - shipped.log",
       whoamiCmd: "whoami",
       whoami: "Soe Moe Htet (Stephen) · Bangkok, Thailand · UTC+7",
       statsCmd: "stats --career",
@@ -50,22 +50,22 @@ export const en: Dict = {
         { value: "2", label: "hackathon wins" },
       ],
       availabilityCmd: "availability",
-      availability: "Hybrid and remote — Bangkok, UTC+7", // PLACEHOLDER (reference: "Remote-ready — regular overlap arranged for US / EU teams")
+      availability: "Hybrid and remote - Bangkok, UTC+7", // PLACEHOLDER (reference: "Remote-ready - regular overlap arranged for US / EU teams")
     },
   },
   about: {
     eyebrow: "How I work",
     title: "About",
     paragraphs: [
-      "I am a software engineer with a Software Engineering degree from KMITL, building production services and agentic AI systems. As a Forward Deployed Engineer at Tech Links Asia I shipped a social media management platform solo — from the data model and FastAPI / SQLAlchemy API through to a production-ready React and TypeScript frontend.",
-      "Before that, at Smart Shift Solutions, I built backend business logic in Kotlin and Spring Boot for Supali CRM and Supali DOA, implemented RBAC and server-side validation, and helped on Context Hub — an internal developer tool that answers questions by autonomously searching every project repository.",
-      "On AI my posture is AI-native: Claude Code and Cursor for implementation, debugging and review, with the quality bar held on everything generated. I design agent products with CopilotKit, A2A and AG-UI — structured input and output, prompt-injection defences and deterministic validation for reliable, auditable behaviour.",
-      "I care about how software reaches users: Docker and Docker Compose, CI/CD pipelines, and observability with Grafana and k6 load testing. I am familiar with production rollout strategies — canary releases, blue/green deployments and feature flags.",
+      "I am a software engineer with a Software Engineering degree from KMITL, building production services and agentic AI systems. As a Forward Deployed Engineer at Tech Links Asia I shipped a social media management platform solo - from the data model and FastAPI / SQLAlchemy API through to a production-ready React and TypeScript frontend.",
+      "Before that, at Smart Shift Solutions, I built backend business logic in Kotlin and Spring Boot for Supali CRM and Supali DOA, implemented RBAC and server-side validation, and helped on Context Hub - an internal developer tool that answers questions by autonomously searching every project repository.",
+      "On AI my posture is AI-native: Claude Code and Cursor for implementation, debugging and review, with the quality bar held on everything generated. I design agent products with CopilotKit, A2A and AG-UI - structured input and output, prompt-injection defences and deterministic validation for reliable, auditable behaviour.",
+      "I care about how software reaches users: Docker and Docker Compose, CI/CD pipelines, and observability with Grafana and k6 load testing. I am familiar with production rollout strategies - canary releases, blue/green deployments and feature flags.",
     ],
     principles: [
       {
         title: "AI-native, human-reviewed",
-        body: "Claude Code and Cursor do the typing; I keep the quality bar on every generated line — implementation, debugging and code review.",
+        body: "Claude Code and Cursor do the typing; I keep the quality bar on every generated line - implementation, debugging and code review.",
       },
       {
         title: "Deterministic validation",
@@ -77,7 +77,7 @@ export const en: Dict = {
       },
       {
         title: "Tested like a QA",
-        body: "A QA internship meant Playwright end-to-end tests, Jira bug tracking and release-readiness reviews — habits I bring to every build.",
+        body: "A QA internship meant Playwright end-to-end tests, Jira bug tracking and release-readiness reviews - habits I bring to every build.",
       },
     ],
     collabTitle: "Collaboration",
@@ -85,7 +85,7 @@ export const en: Dict = {
       { label: "Tools", value: "Jira, Asana, Trello, GitHub, GitLab, Figma, TestMo, Claude Code, Cursor" },
       {
         label: "Working style",
-        value: "SCRUM and Agile collaboration — daily stand-ups, regression testing cycles and release-readiness reviews",
+        value: "SCRUM and Agile collaboration - daily stand-ups, regression testing cycles and release-readiness reviews",
       },
       { label: "Availability", value: "Based in Bangkok (UTC+7); experienced with hybrid and remote work" }, // PLACEHOLDER
     ],
@@ -93,22 +93,22 @@ export const en: Dict = {
     education: [
       {
         school: "King Mongkut’s Institute of Technology Ladkrabang",
-        degree: "Software Engineering — fresh graduate",
+        degree: "Software Engineering - fresh graduate",
         period: "2022 – 2026",
       },
       {
         school: "Yangon Technological University",
-        degree: "Information Technology — third year",
+        degree: "Information Technology - third year",
         period: "2018 – 2021",
       },
     ],
     languagesTitle: "Languages",
     languages: [
-      { name: "Burmese", level: "Native" }, // PLACEHOLDER — not in resume
-      { name: "English", level: "Professional working proficiency" }, // PLACEHOLDER — not in resume
+      { name: "Burmese", level: "Native" }, // PLACEHOLDER - not in resume
+      { name: "English", level: "Professional working proficiency" }, // PLACEHOLDER - not in resume
     ],
     awardsTitle: "Awards",
-    awards: ["ASEAN-INDIA Hackathon 2021 — winner", "Ooredoo Hackathon 2018 — Best Business Idea, Yangon, Myanmar"],
+    awards: ["ASEAN-INDIA Hackathon 2021 - winner", "Ooredoo Hackathon 2018 - Best Business Idea, Yangon, Myanmar"],
     activitiesTitle: "Beyond work",
     activities: [
       {
@@ -240,9 +240,9 @@ export const en: Dict = {
         period: "Jul 2026 – Present",
         summary: "A social media management platform, shipped solo from spec to deploy.",
         bullets: [
-          "Owned the full delivery pipeline end-to-end — from data model and API design (FastAPI / SQLAlchemy) to a production-ready React / TypeScript frontend — shipping a working social media management platform solo, from spec to deploy.",
+          "Owned the full delivery pipeline end-to-end - from data model and API design (FastAPI / SQLAlchemy) to a production-ready React / TypeScript frontend - shipping a working social media management platform solo, from spec to deploy.",
           "Integrated and stood up connections across six external platform APIs (Facebook, Instagram, LinkedIn, TikTok, X / Twitter, YouTube) behind a unified service-registry abstraction, so new channel integrations plug in without touching core logic.",
-          "Embedded an AI copilot directly into user-facing workflows (composer, post editing) to translate a product need — faster content creation — into a working, deployed feature rather than a backlog item.",
+          "Embedded an AI copilot directly into user-facing workflows (composer, post editing) to translate a product need - faster content creation - into a working, deployed feature rather than a backlog item.",
           "Configured and deployed the full stack to production infrastructure (Docker, docker-compose, Render), closing the loop from code to a live, usable system rather than stopping at a local demo.",
         ],
         tags: ["Claude Code", "Lovable", "AWS", "GitHub Actions", "FastAPI", "SQLAlchemy", "React", "TypeScript"],
@@ -257,9 +257,9 @@ export const en: Dict = {
         bullets: [
           "Built backend business logic modules (config, flow orchestration, position management) for Supali CRM and Supali DOA using Kotlin and Spring Boot, integrated with a Next.js frontend across the full request lifecycle.",
           "Implemented RBAC and server-side validation to enforce data boundaries and prevent unauthorized state changes across internal platforms.",
-          "Helped on the Context Hub project, an internal developer tool that answers questions by autonomously searching across all project repositories — a retrieval-augmented, agentic lookup system that reduced cross-team information bottlenecks.",
+          "Helped on the Context Hub project, an internal developer tool that answers questions by autonomously searching across all project repositories - a retrieval-augmented, agentic lookup system that reduced cross-team information bottlenecks.",
           "Assisted in Docker builds for the Mitr Phol project, gaining hands-on exposure to containerised service packaging and deployment workflows.",
-          "Worked AI-native throughout — using Claude Code and Cursor (company-sponsored) for implementation, debugging and code review, maintaining the quality bar on all generated output.",
+          "Worked AI-native throughout - using Claude Code and Cursor (company-sponsored) for implementation, debugging and code review, maintaining the quality bar on all generated output.",
           "Designed and proposed an agentic AI admin commerce platform on Agno using CopilotKit AI, incorporating structured input / output, prompt-injection defences and deterministic validation for reliable, auditable agent behaviour.",
           "Proposed an n8n-based internal workflow automation layer to eliminate repetitive document handling.",
         ],
@@ -289,7 +289,7 @@ export const en: Dict = {
         period: "Jul 2025",
         place: "Remote",
         kind: "Freelance",
-        summary: "Working with Senior DevOps Engineer Vladimir (Cageyv) Samoylov — LlamaIndex, Docker, multi-agent.",
+        summary: "Working with Senior DevOps Engineer Vladimir (Cageyv) Samoylov - LlamaIndex, Docker, multi-agent.",
         bullets: [
           "Helped build a system that converts natural-language prompts into SQL queries using the LlamaIndex framework.",
           "Designed a multi-agent architecture where each agent handled specific tasks (e.g. query parsing, validation, optimisation).",
@@ -319,7 +319,7 @@ export const en: Dict = {
         kind: "Internship",
         summary: "On-premise proof-of-concept testing of Huawei’s Hi Agent and CubeX systems.",
         bullets: [
-          "Went to the Huawei office at G-Tower to test the Hi Agent and CubeX systems in POC testing — to understand how Huawei AI can integrate with prompts, build multi-agents and RAG applications (similar to LangChain).",
+          "Went to the Huawei office at G-Tower to test the Hi Agent and CubeX systems in POC testing - to understand how Huawei AI can integrate with prompts, build multi-agents and RAG applications (similar to LangChain).",
           "Ended the internship early due to schedule conflicts with university; Hi Agent and CubeX can only be tested on on-premise hardware at G-Tower.",
         ],
         tags: ["Huawei Hi Agent", "CubeX", "RAG", "Multi-agent"],
@@ -332,7 +332,7 @@ export const en: Dict = {
         kind: "Internship",
         summary: "A Braze test app in Flutter, then manual QA on the CXBOX product.",
         bullets: [
-          "Developed an internal mobile testing app with CRM features — IAM, content cards with the Braze SDK — in Flutter, to test Braze features for a customer so that in-app messages, push notifications and content cards from Braze campaigns reach the customer.",
+          "Developed an internal mobile testing app with CRM features - IAM, content cards with the Braze SDK - in Flutter, to test Braze features for a customer so that in-app messages, push notifications and content cards from Braze campaigns reach the customer.",
           "Collaborated with full-time developers and team members on the company website for POC testing and API testing.",
           "Transitioned to manual QA testing of CXBOX, leveraging analytical skills to identify and resolve software issues.",
           "Contributed to the development of CXBOX (cxbox.io), driving innovation in a hybrid work environment at Demeter ICT.",
@@ -388,7 +388,7 @@ export const en: Dict = {
     items: [
       {
         kicker: "Tech Links Asia · Social media management",
-        title: "A social media platform — six channels behind one registry",
+        title: "A social media platform - six channels behind one registry",
         desc: "Shipped solo from spec to deploy: FastAPI / SQLAlchemy API, a production React / TypeScript frontend, and an AI copilot embedded in the composer and post editing.",
         stats: [
           { value: "6", label: "platform APIs behind one service registry" },
@@ -400,7 +400,7 @@ export const en: Dict = {
       },
       {
         kicker: "Zojump · Multi-agent SQL",
-        title: "Natural language to SQL — a multi-agent pipeline",
+        title: "Natural language to SQL - a multi-agent pipeline",
         desc: "A LlamaIndex system that turns prompts into SQL, with separate agents for query parsing, validation and optimisation, containerised end to end with Docker.",
         stats: [
           { value: "NL→SQL", label: "natural-language prompts to queries" },
@@ -412,8 +412,8 @@ export const en: Dict = {
       {
         kicker: "Smart Shift Solutions · Internal tool",
         badge: "Internal",
-        title: "Context Hub — agentic lookup across every repository",
-        desc: "An internal developer tool that answers questions by autonomously searching all project repositories — retrieval-augmented and agentic, cutting cross-team information bottlenecks.",
+        title: "Context Hub - agentic lookup across every repository",
+        desc: "An internal developer tool that answers questions by autonomously searching all project repositories - retrieval-augmented and agentic, cutting cross-team information bottlenecks.",
         stats: [
           { value: "RAG", label: "retrieval-augmented answers" },
           { value: "Agentic", label: "autonomous repository search" },
@@ -434,7 +434,7 @@ export const en: Dict = {
       },
       {
         kicker: "Clara Robotic · Part-time",
-        title: "A conveyor control system — PLC data to a live web UI",
+        title: "A conveyor control system - PLC data to a live web UI",
         desc: "Python Flask and WebSocket for real-time data, serial communication and a ZeroMQ broker managing PLC controller flow, with QR and proximity sensors improving movement accuracy.",
         stats: [
           { value: "WS", label: "real-time WebSocket data" },
@@ -447,7 +447,7 @@ export const en: Dict = {
       // ---- PLACEHOLDERS: copied from the reference portfolio. Replace or delete. ----
       {
         kicker: "Conexa · B2B networking & CRM platform",
-        title: "AI Connector — an in-product agentic assistant",
+        title: "AI Connector - an in-product agentic assistant",
         desc: "A streaming tool-use loop with 13 tools, one wire protocol implemented twice: TypeScript for web, Go for realtime.",
         stats: [
           { value: "13", label: "tools in the registry" },
@@ -460,7 +460,7 @@ export const en: Dict = {
       },
       {
         kicker: "Conexa · Integration infrastructure",
-        title: "A Go MCP server — opening the platform to external agents",
+        title: "A Go MCP server - opening the platform to external agents",
         desc: "Streamable HTTP, JWT verified at the edge, per-scope consent stored in PostgreSQL and requested through MCP elicitation.",
         stats: [
           { value: "JWT", label: "verified at the edge" },
@@ -472,7 +472,7 @@ export const en: Dict = {
       },
       {
         kicker: "Conexa · Advertising automation for an e-commerce agency",
-        title: "An ads automation platform — three surfaces on one Go backend",
+        title: "An ads automation platform - three surfaces on one Go backend",
         desc: "I built the system in TypeScript/Node, moved it to Go services myself with parity tests as the acceptance gate, then built the two Next.js surfaces on top: an operations console for the agency and a public landing site reading its CMS from that same backend.",
         stats: [
           { value: "~91k", label: "lines of Go across 406 files" },
@@ -485,8 +485,8 @@ export const en: Dict = {
       },
       {
         kicker: "Personal project · Playable on the web",
-        title: "Deep-sea spearfishing — a multiplayer 3D game in the browser",
-        desc: "A Go server owning every rule at a 20Hz tick, a Babylon.js client, one protobuf schema generating both sides — and voice chat riding that same WebSocket instead of WebRTC.",
+        title: "Deep-sea spearfishing - a multiplayer 3D game in the browser",
+        desc: "A Go server owning every rule at a 20Hz tick, a Babylon.js client, one protobuf schema generating both sides - and voice chat riding that same WebSocket instead of WebRTC.",
         stats: [
           { value: "20Hz", label: "server-authoritative simulation tick" },
           { value: "100", label: "players per room, tick under 50ms" },
@@ -498,7 +498,7 @@ export const en: Dict = {
       },
       {
         kicker: "Self-directed open-source project",
-        title: "NewEra AI Demo — agentic RAG for IoT and fintech",
+        title: "NewEra AI Demo - agentic RAG for IoT and fintech",
         desc: "A hand-written agent loop on the Claude Messages API, hybrid retrieval benchmarked across four configurations, and the same tools exposed over MCP.",
         stats: [
           { value: "4", label: "retriever configurations benchmarked" },
@@ -521,7 +521,7 @@ export const en: Dict = {
         date: "02 Jun 2026",
         read: "2 min read",
         title: "Porting a TypeScript monolith to Go without behavioural drift",
-        desc: "I wrote the Node build, then moved it to Go myself. That sounds easier — until you notice that “I remember how it behaves” is not an acceptance criterion.",
+        desc: "I wrote the Node build, then moved it to Go myself. That sounds easier - until you notice that “I remember how it behaves” is not an acceptance criterion.",
         tags: ["Go", "Migration", "Testing"],
         placeholder: true,
       },
@@ -572,7 +572,7 @@ export const en: Dict = {
       locationCmd: "location",
       location: "Lat Krabang, Bangkok, Thailand · UTC+7",
       availabilityCmd: "availability",
-      availability: "Hybrid and remote — open to new opportunities", // PLACEHOLDER
+      availability: "Hybrid and remote - open to new opportunities", // PLACEHOLDER
     },
   },
   footer: {

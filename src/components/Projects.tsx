@@ -1,18 +1,19 @@
 import type { Dict } from "@/content";
 import { Reveal } from "./Reveal";
-import { Badge, PlaceholderPill, Section, SectionHead, TagList } from "./ui";
+import { Badge, Bezel, PlaceholderPill, Section, SectionHead, TagList, bentoSpan, bentoTone } from "./ui";
 
 export function Projects({ projects }: { projects: Dict["projects"] }) {
+  const n = projects.items.length;
   return (
     <Section id="projects">
-      <SectionHead n="04" eyebrow={projects.eyebrow} title={projects.title} />
+      <SectionHead eyebrow={projects.eyebrow} title={projects.title} />
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-12">
         {projects.items.map((p, i) => (
-          <Reveal key={p.title} delay={(i % 2) * 70} className="relative">
-            <article className="card card-hover flex h-full flex-col p-6">
+          <Reveal key={p.title} delay={(i % 2) * 80} className={bentoSpan(i, n)}>
+            <Bezel lift className="h-full" coreClassName={`flex h-full flex-col p-7 sm:p-9 ${bentoTone(i + 1)}`}>
               <div className="flex items-start justify-between gap-4">
-                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">{p.kicker}</p>
+                <p className="text-[13px] leading-snug text-ink-soft">{p.kicker}</p>
                 {p.placeholder ? (
                   <PlaceholderPill label={projects.placeholderLabel} />
                 ) : (
@@ -20,20 +21,22 @@ export function Projects({ projects }: { projects: Dict["projects"] }) {
                 )}
               </div>
 
-              <h3 className="mt-4 text-lg font-semibold leading-snug text-ink">{p.title}</h3>
-              <p className="mt-3 text-[13.5px] leading-relaxed text-ink-soft">{p.desc}</p>
+              <h3 className="mt-6 max-w-[26ch] font-display text-2xl font-semibold leading-[1.15] tracking-tight text-ink sm:text-[1.75rem]">
+                {p.title}
+              </h3>
+              <p className="mt-4 max-w-[58ch] text-[14.5px] leading-relaxed text-ink-soft">{p.desc}</p>
 
-              <dl className="mt-5 grid grid-cols-2 gap-3">
+              <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-rule pt-6">
                 {p.stats.map((s) => (
-                  <div key={s.label} className="rounded-xl border border-rule bg-paper p-3">
-                    <dt className="font-mono text-base text-accent">{s.value}</dt>
-                    <dd className="mt-0.5 text-[11px] leading-snug text-ink-faint">{s.label}</dd>
+                  <div key={s.label}>
+                    <dt className="font-display text-2xl font-semibold tracking-tight text-accent">{s.value}</dt>
+                    <dd className="mt-1 text-[12.5px] leading-snug text-ink-faint">{s.label}</dd>
                   </div>
                 ))}
               </dl>
 
-              <TagList tags={p.tags} />
-            </article>
+              <TagList tags={p.tags} className="mt-auto pt-7" />
+            </Bezel>
           </Reveal>
         ))}
       </div>

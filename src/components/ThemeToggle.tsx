@@ -1,5 +1,6 @@
 "use client";
 
+import { Moon, Sun } from "@phosphor-icons/react/dist/ssr";
 import { THEME_STORAGE_KEY } from "@/lib/theme-script";
 
 /**
@@ -14,20 +15,8 @@ export function ThemeToggle({ label }: { label: string }) {
     try {
       localStorage.setItem(THEME_STORAGE_KEY, next);
     } catch {
-      /* storage blocked — the theme still applies for this visit */
+      /* storage blocked: the theme still applies for this visit */
     }
-  };
-
-  const icon = {
-    width: 16,
-    height: 16,
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 1.75,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    "aria-hidden": true,
   };
 
   return (
@@ -36,16 +25,11 @@ export function ThemeToggle({ label }: { label: string }) {
       onClick={toggle}
       aria-label={label}
       title={label}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-rule text-ink-soft transition hover:border-ink-soft hover:text-ink"
+      className="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition-colors duration-500 hover:bg-ink/10 hover:text-ink active:scale-95"
     >
       {/* Shows the theme you would switch TO: sun while dark, moon while light. */}
-      <svg {...icon} className="theme-icon-sun">
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-      </svg>
-      <svg {...icon} className="theme-icon-moon">
-        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
-      </svg>
+      <Sun size={18} weight="light" className="theme-icon-sun" aria-hidden="true" />
+      <Moon size={18} weight="light" className="theme-icon-moon" aria-hidden="true" />
     </button>
   );
 }
