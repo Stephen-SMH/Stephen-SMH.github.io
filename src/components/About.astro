@@ -5,7 +5,7 @@ import MonoLabel from "./MonoLabel.astro";
 import Reveal from "./Reveal.astro";
 import Section from "./Section.astro";
 import SectionHead from "./SectionHead.astro";
-import { bentoTone } from "./ui";
+import { bentoTone, withBase } from "./ui";
 
 const { about } = Astro.props as { about: Dict["about"] };
 const spans = ["md:col-span-4", "md:col-span-2", "md:col-span-2", "md:col-span-4"];
@@ -36,7 +36,7 @@ const spans = ["md:col-span-4", "md:col-span-2", "md:col-span-2", "md:col-span-4
     <Reveal>
       <Bezel class="lg:sticky lg:top-24" core="p-7 sm:p-9">
         <img
-          src="/portrait.jpg"
+          src={withBase("/portrait.jpg")}
           alt="Portrait of Soe Moe Htet"
           width="800"
           height="1000"

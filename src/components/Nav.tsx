@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { DownloadSimple } from "@phosphor-icons/react/dist/ssr";
 import type { Dict, Locale } from "@/content";
+import { withBase } from "./ui";
 
 /**
  * The only React island: it owns the mobile-menu state and the sliding
@@ -72,7 +73,7 @@ export function Nav({
       <header data-nav suppressHydrationWarning className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4 sm:pt-5">
         <div className="glass pointer-events-auto flex max-w-full items-center gap-1 rounded-full p-1.5">
           <a
-            href={`/${locale}/`}
+            href={withBase(`/${locale}/`)}
             onClick={() => setOpen(false)}
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full py-2 pl-4 pr-3 font-mono text-[13px] text-ink"
           >
@@ -103,7 +104,7 @@ export function Nav({
 
           <div className="ml-1 flex items-center gap-1">
             {controls}
-            <a href="/cv.pdf" download className="btn btn-primary ml-1 hidden !pl-4 !text-[13px] md:inline-flex">
+            <a href={withBase("/cv.pdf")} download className="btn btn-primary ml-1 hidden !pl-4 !text-[13px] md:inline-flex">
               {nav.downloadCv}
               <span className="btn-icon !h-8 !w-8" aria-hidden="true">
                 <DownloadSimple size={15} weight="light" />
@@ -158,7 +159,7 @@ export function Nav({
             </a>
           ))}
           <a
-            href="/cv.pdf"
+            href={withBase("/cv.pdf")}
             download
             style={{ transitionDelay: open ? `${160 + links.length * 60}ms` : "0ms" }}
             className={`btn btn-primary mt-8 w-max transition-all duration-700 ${ease} ${

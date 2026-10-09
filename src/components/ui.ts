@@ -32,3 +32,9 @@ export function nextPhase() {
   phase += 1;
   return `-${((phase * 2.3) % 9).toFixed(1)}s`;
 }
+
+/** Prefix a root-relative path with the site's base (e.g. "/software-engineering-portfolio"). */
+export function withBase(path: string) {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+}

@@ -6,6 +6,7 @@ import "@fontsource-variable/noto-sans-thai";
 import "@fontsource-variable/noto-sans-myanmar";
 import "../styles/global.css";
 import { localeMeta, locales, type Locale } from "@/content";
+import { withBase } from "../components/ui";
 
 const { locale, title, description, name } = Astro.props as {
   locale: Locale;
@@ -39,8 +40,8 @@ const boot = `(function(){
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    {locales.map((l) => <link rel="alternate" hreflang={localeMeta[l].htmlLang} href={`/${l}/`} />)}
+    <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
+    {locales.map((l) => <link rel="alternate" hreflang={localeMeta[l].htmlLang} href={withBase(`/${l}/`)} />)}
     <script is:inline set:html={boot} />
     <ClientRouter />
   </head>

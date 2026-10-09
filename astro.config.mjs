@@ -6,6 +6,8 @@ import tailwindcss from "@tailwindcss/vite";
 // Artifact preview). The Artifact host reserves top-level "_"-prefixed paths,
 // so `ARTIFACT_BUILD=1 npm run build` renames Astro's "_astro" folder.
 export default defineConfig({
+  site: "https://stephen-smh.github.io",
+  base: "/software-engineering-portfolio",
   output: "static",
   trailingSlash: "always",
   build: { format: "directory", assets: process.env.ARTIFACT_BUILD ? "static" : "_astro" },

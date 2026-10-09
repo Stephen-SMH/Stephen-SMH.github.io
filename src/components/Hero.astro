@@ -2,6 +2,7 @@
 import { ArrowDown, DownloadSimple, GithubLogo, LinkedinLogo } from "@phosphor-icons/react/dist/ssr";
 import type { Dict } from "@/content";
 import Bezel from "./Bezel.astro";
+import { withBase } from "./ui";
 
 const { hero, contact } = Astro.props as { hero: Dict["hero"]; contact: Dict["contact"]["direct"] };
 const t = hero.terminal;
@@ -50,7 +51,7 @@ const social =
             {hero.viewWork}
             <span class="btn-icon" aria-hidden="true"><ArrowDown size={16} weight="light" /></span>
           </a>
-          <a href="/cv.pdf" download class="btn btn-ghost">
+          <a href={withBase("/cv.pdf")} download class="btn btn-ghost">
             {hero.downloadCv}
             <span class="btn-icon" aria-hidden="true"><DownloadSimple size={16} weight="light" /></span>
           </a>
