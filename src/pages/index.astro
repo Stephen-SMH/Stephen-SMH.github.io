@@ -1,0 +1,107 @@
+---
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+
+// Edit the links here. Both portfolios are separate sites.
+const me = {
+  name: 'Soe Moe Htet',
+  nick: 'Stephen',
+  line: 'Software engineer and game developer. Two sides of the same craft: pick the one you came for.',
+  location: 'Bangkok, Thailand · UTC+7',
+  email: 'soemoehtetstephen@gmail.com',
+  github: 'https://github.com/Stephen-SMH',
+};
+const portfolios = [
+  {
+    n: '01',
+    title: 'Software Engineering',
+    blurb: 'Agentic AI and production services. TypeScript, Python, FastAPI, React.',
+    href: '/software-engineering-portfolio/',
+    tags: ['CopilotKit', 'A2A', 'AG-UI', 'PostgreSQL'],
+    accent: '#2da9d2',
+  },
+  {
+    n: '02',
+    title: 'Game Development',
+    blurb: 'Social deduction, narrative survival and a few experiments in between.',
+    href: '/game-portfolio/',
+    tags: ['Game jam', 'Social deduction', 'Narrative'],
+    accent: '#6c9cf3',
+  },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{me.name} - Portfolio</title>
+    <meta name="description" content={me.line} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="intro">
+        <img class="portrait" src="/portrait.jpg" alt={`Portrait of ${me.name}`} width="96" height="96" />
+        <p class="mono eyebrow">{me.location}</p>
+        <h1>{me.name} <span class="nick">({me.nick})</span></h1>
+        <p class="lede">{me.line}</p>
+      </header>
+
+      <nav class="grid" aria-label="Portfolios">
+        {portfolios.map((p) => (
+          <a class="card" href={p.href} style={`--accent:${p.accent}`}>
+            <span class="mono num">{p.n}</span>
+            <h2>{p.title}</h2>
+            <p>{p.blurb}</p>
+            <ul>{p.tags.map((t) => <li class="mono">{t}</li>)}</ul>
+            <span class="go mono">Open portfolio <i aria-hidden="true">→</i></span>
+          </a>
+        ))}
+      </nav>
+
+      <footer class="mono">
+        <a href={`mailto:${me.email}`}>{me.email}</a>
+        <a href={me.github} rel="noopener">GitHub</a>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #05070a; --panel: #0b0f14; --fg: #e8edef; --dim: #94a2a9; --faint: #66747b;
+    --hair: rgba(255,255,255,0.09); --ease: cubic-bezier(0.32,0.72,0,1);
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 400 16px/1.6 'Geist Variable', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100dvh; }
+  a { color: inherit; text-decoration: none; }
+  h1, h2, p, ul { margin: 0; padding: 0; }
+  ul { list-style: none; }
+  .mono { font-family: 'Geist Mono Variable', ui-monospace, monospace; }
+  .wrap { width: min(1080px, 100% - 32px); margin-inline: auto; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; gap: 56px; padding-block: 64px; }
+  .portrait { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 1px solid var(--hair); margin-bottom: 24px; }
+  .eyebrow { font-size: 13px; color: var(--faint); letter-spacing: 0.04em; margin-bottom: 8px; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4.5rem); line-height: 1.04; letter-spacing: -0.03em; font-weight: 600; }
+  .nick { color: var(--faint); font-weight: 400; }
+  .lede { margin-top: 20px; max-width: 52ch; font-size: 1.125rem; color: var(--dim); }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .card { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 32px; min-height: 300px; background: var(--panel); border: 1px solid var(--hair); border-radius: 20px; overflow: hidden; transition: transform .6s var(--ease), border-color .4s var(--ease); }
+  .card::before { content: ''; position: absolute; inset: auto -20% -60% -20%; height: 80%; background: radial-gradient(closest-side, var(--accent), transparent); opacity: 0.12; transition: opacity .6s var(--ease); }
+  .card:hover, .card:focus-visible { transform: translateY(-4px); border-color: var(--accent); }
+  .card:hover::before, .card:focus-visible::before { opacity: 0.28; }
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .num { font-size: 13px; color: var(--accent); }
+  h2 { font-size: 1.75rem; letter-spacing: -0.02em; font-weight: 600; }
+  .card p { color: var(--dim); max-width: 36ch; }
+  .card ul { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .card li { font-size: 12px; padding: 3px 10px; border: 1px solid var(--hair); border-radius: 999px; color: var(--dim); }
+  .go { margin-top: auto; padding-top: 24px; font-size: 14px; color: var(--accent); }
+  .go i { display: inline-block; font-style: normal; transition: transform .4s var(--ease); }
+  .card:hover .go i { transform: translateX(6px); }
+  footer { display: flex; gap: 24px; flex-wrap: wrap; font-size: 13px; color: var(--faint); }
+  footer a:hover { color: var(--fg); }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } .card { min-height: 240px; padding: 24px; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
