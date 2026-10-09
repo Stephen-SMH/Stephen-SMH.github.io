@@ -11,7 +11,7 @@ export default defineConfig({
   output: "static",
   trailingSlash: "always",
   build: { format: "directory", assets: process.env.ARTIFACT_BUILD ? "static" : "_astro" },
-  redirects: { "/": "/en/" },
+  redirects: { "/": "/software-engineering-portfolio/en/" },
   integrations: [react()],
   vite: { plugins: [tailwindcss()] },
 });
