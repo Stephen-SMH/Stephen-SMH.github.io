@@ -412,6 +412,22 @@ export const en: Dict = {
     placeholderLabel: "Placeholder",
     items: [
       {
+        kicker: "Personal project · Open source · PostgreSQL",
+        title: "Migrate Studio - run migrations, then see what they did",
+        desc: "A Go binary with a React UI built in. It applies and rolls back SQL migrations safely, lints them for risky statements, replays every step on a scratch database to draw a schema timeline, proves each down really undoes its up, and catches changes made to the database by hand.",
+        stats: [
+          { value: "Drift", label: "live schema diffed against what the migrations should produce" },
+          { value: "10", label: "lint rules, each pointing at a line and a fix" },
+          { value: "Undo", label: "every down replayed and checked on a scratch database" },
+          { value: "Go", label: "one binary with the React UI embedded" },
+        ],
+        tags: ["Go", "PostgreSQL", "React", "TypeScript", "GitHub Actions"],
+        links: [
+          { label: "Live demo", href: "https://stephen-smh.github.io/migrate-studio/" },
+          { label: "Source on GitHub", href: "https://github.com/Stephen-SMH/migrate-studio" },
+        ],
+      },
+      {
         kicker: "Tech Links Asia · Social media management",
         title: "A social media platform - six channels behind one registry",
         desc: "Shipped solo from spec to deploy: FastAPI / SQLAlchemy API, a production React / TypeScript frontend, and an AI copilot embedded in the composer and post editing.",

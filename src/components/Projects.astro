@@ -40,6 +40,21 @@ const n = projects.items.length;
             ))}
           </dl>
 
+          {p.links && (
+            <div class="mt-7 flex flex-wrap gap-3">
+              {p.links.map((l) => (
+                <a
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex min-h-11 items-center rounded-full px-5 text-sm font-medium text-ink ring-1 ring-inset ring-rule transition-[box-shadow,transform] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:ring-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  {l.label}<span class="sr-only"> (opens in a new tab)</span>
+                </a>
+              ))}
+            </div>
+          )}
+
           <TagList tags={p.tags} class="mt-auto pt-7" />
         </Bezel>
       </Reveal>

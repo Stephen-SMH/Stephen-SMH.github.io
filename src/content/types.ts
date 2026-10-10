@@ -105,6 +105,7 @@ export interface Dict {
       desc: string;
       stats: Stat[];
       tags: string[];
+      links?: { label: string; href: string }[];
       placeholder?: boolean;
     }[];
   };
