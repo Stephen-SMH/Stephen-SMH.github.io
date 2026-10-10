@@ -1,108 +1,67 @@
 ---
 import type { Dict } from "@/content";
-import ArrowIsland from "./ArrowIsland.astro";
-import Bezel from "./Bezel.astro";
-import MonoLabel from "./MonoLabel.astro";
-import Reveal from "./Reveal.astro";
+import Animal from "./Animal.astro";
 import Section from "./Section.astro";
 import SectionHead from "./SectionHead.astro";
 
 const { contact } = Astro.props as { contact: Dict["contact"] };
-const { form, direct, card } = contact;
-
-// The number is assembled at click time so it never appears in the page HTML.
-const field =
-  "w-full rounded-2xl bg-paper-sunken/60 px-4 py-3.5 text-[15px] text-ink ring-1 ring-inset ring-rule placeholder:text-ink-faint transition-shadow duration-500 outline-none focus:ring-2 focus:ring-accent";
-const rowBase =
-  "group flex items-center justify-between gap-4 rounded-2xl bg-paper-sunken/50 px-5 py-4 ring-1 ring-inset ring-rule transition-all duration-500 hover:bg-paper-sunken hover:ring-accent/40";
-const rowLabel = "text-[13px] text-ink-faint";
-const rowValue = "font-mono text-[13px] text-ink transition group-hover:text-accent";
-const lbl = "mb-2 block text-[13px] font-medium text-ink-soft";
+const { chat, direct, card } = contact;
+const mail = (subject: string) => `mailto:${direct.email}?subject=${encodeURIComponent(subject)}`;
+const payload = JSON.stringify({
+  to: direct.email,
+  options: chat.options,
+  restart: chat.restart,
+  methods: {
+    email: { label: direct.emailLabel, value: direct.email },
+    linkedin: { label: direct.linkedinLabel, value: direct.linkedin, url: direct.linkedinUrl },
+    github: { label: direct.githubLabel, value: direct.github, url: direct.githubUrl },
+    phone: { label: direct.phoneLabel, value: direct.phoneMasked, hint: direct.reveal, aria: direct.revealAria },
+  },
+});
 ---
-<Section id="contact">
+<Section id="contact" class="cs-theme">
   <SectionHead eyebrow={contact.eyebrow} title={contact.title} />
 
-  <div class="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-    <Reveal variant="card">
-      <Bezel core="p-7 sm:p-10">
-        <form
-          novalidate
-          data-contact-form
-          data-to={direct.email}
-          data-invalid={form.invalid}
-          data-opening={form.opening}
-          class="space-y-4"
-        >
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label for="name" class={lbl}>{form.name}</label>
-              <input id="name" name="name" required autocomplete="name" placeholder={form.namePh} class={field} />
-            </div>
-            <div>
-              <label for="email" class={lbl}>{form.email}</label>
-              <input id="email" name="email" type="email" required autocomplete="email" placeholder={form.emailPh} class={field} />
-            </div>
-          </div>
-          <div>
-            <label for="subject" class={lbl}>{form.subject}</label>
-            <input id="subject" name="subject" required placeholder={form.subjectPh} class={field} />
-          </div>
-          <div>
-            <label for="message" class={lbl}>{form.message}</label>
-            <textarea data-lenis-prevent id="message" name="message" rows="6" required placeholder={form.messagePh} class:list={[field, "resize-y"]}></textarea>
-          </div>
-          <div class="flex flex-wrap items-center gap-4 pt-1">
-            <button type="submit" class="btn btn-primary">
-              {form.send}
-              <ArrowIsland />
-            </button>
-            <p aria-live="polite" data-form-status class="font-mono text-[12px]"></p>
-          </div>
-        </form>
-      </Bezel>
-    </Reveal>
-
-    <Reveal variant="card">
-      <Bezel class="h-full" core="core-accent p-7 sm:p-10">
-        <MonoLabel>{direct.title}</MonoLabel>
-        <ul class="mt-5 space-y-3">
-          <li>
-            <a href={`mailto:${direct.email}`} class={rowBase}>
-              <span class={rowLabel}>{direct.emailLabel}</span>
-              <span class={rowValue}>{direct.email}</span>
-            </a>
-          </li>
-          <li>
-            <a href={direct.githubUrl} target="_blank" rel="noreferrer noopener" class={rowBase}>
-              <span class={rowLabel}>{direct.githubLabel}</span>
-              <span class={rowValue}>{direct.github}</span>
-            </a>
-          </li>
-          <li>
-            <a href={direct.linkedinUrl} target="_blank" rel="noreferrer noopener" class={rowBase}>
-              <span class={rowLabel}>{direct.linkedinLabel}</span>
-              <span class={rowValue}>{direct.linkedin}</span>
-            </a>
-          </li>
-          <li>
-            <button type="button" data-phone-reveal aria-label={direct.revealAria} class:list={[rowBase, "w-full text-left"]}>
-              <span class={rowLabel}>{direct.phoneLabel}</span>
-              <span class="flex items-center gap-2">
-                <span data-phone-value class="select-none font-mono text-[13px] text-ink-soft" aria-hidden="true">{direct.phoneMasked}</span>
-                <span data-phone-hint class="font-mono text-[11px] text-accent transition-colors duration-500 group-hover:text-accent-soft-ink">{direct.reveal}</span>
-              </span>
-            </button>
-          </li>
-        </ul>
-        <p class="mt-3 px-1 font-mono text-[11px] text-ink-faint">{direct.hiddenNote}</p>
-
-        <div class="mt-6 rounded-2xl bg-paper-sunken/50 p-5 ring-1 ring-inset ring-rule">
-          <p class="font-mono text-[12px] text-ink-soft"><span class="text-accent">$</span> {card.locationCmd}</p>
-          <p class="mt-1.5 text-[13px] text-ink">{card.location}</p>
-          <p class="mt-3 font-mono text-[12px] text-ink-soft"><span class="text-accent">$</span> {card.availabilityCmd}</p>
-          <p class="mt-1.5 text-[13px] text-ink">{card.availability}</p>
+  <div class="ct-wrap rounded-[2rem] p-5 sm:p-10">
+    <div class="grid items-center gap-10 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
+      <!-- left: statement, status chips, quick copy -->
+      <div class="text-white">
+        <p class="max-w-[16ch] font-display text-[clamp(2.2rem,5.2vw,4.2rem)] font-semibold leading-[1.02] tracking-tighter">{chat.lead}</p>
+        <div class="mt-8 flex flex-wrap gap-2.5">
+          <span class="ct-chip"><i class="relative flex h-2 w-2"><i class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-70"></i><i class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></i></i>{card.availability}</span>
+          <span class="ct-chip">{card.location}</span>
         </div>
-      </Bezel>
-    </Reveal>
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+          <button type="button" data-copy={direct.email} data-copied={chat.copied} class="ct-chip ct-chip-btn">
+            <span data-copy-label>{chat.copy}</span><span class="text-white/50">·</span><span class="font-mono text-[12px] text-white/70">{direct.email}</span>
+          </button>
+          <a href={`mailto:${direct.email}`} class="text-[13px] text-white/60 underline-offset-4 transition-colors hover:text-white hover:underline">{chat.skip}</a>
+        </div>
+      </div>
+
+      <!-- right: the chat -->
+      <div class="ct-phone mx-auto w-full max-w-[24rem] rounded-[2.2rem] p-2.5" data-chat={payload}>
+        <div class="flex h-[34rem] flex-col rounded-[1.8rem] bg-[#12122b]/80 backdrop-blur">
+          <div class="flex items-center gap-3 border-b border-white/10 px-4 py-3.5">
+            <span class="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full" style="background:linear-gradient(135deg,#f472b6,#6366f1)">
+              <Animal kind="fox" class="mt-2 h-10 w-9" />
+            </span>
+            <div class="min-w-0">
+              <p class="text-[15px] font-medium text-white">{chat.name}</p>
+              <p class="flex items-center gap-1.5 truncate font-mono text-[11px] text-white/55"><i class="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300"></i>{chat.online}</p>
+            </div>
+          </div>
+
+          <div data-chat-log data-lenis-prevent class="flex-1 space-y-2.5 overflow-y-auto px-4 py-4 text-[14px]">
+            <p class="ct-bot">{chat.hello}</p>
+            <p class="ct-bot">{chat.ask}</p>
+          </div>
+
+          <div data-chat-opts class="flex flex-wrap gap-2 border-t border-white/10 px-4 py-3.5">
+            {chat.options.map((o, i) => <a href={mail(o.subject)} data-chat-opt={i} class="ct-reply">{o.label}</a>)}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </Section>

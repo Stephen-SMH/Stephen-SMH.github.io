@@ -1,0 +1,12 @@
+---
+const { class: className = "", style = "", tablet = false, bar = true } = Astro.props as { class?: string; style?: string; tablet?: boolean; bar?: boolean };
+---
+<div class:list={["overflow-hidden bg-core shadow-[0_28px_60px_-28px_rgba(0,0,0,0.55)]", tablet ? "rounded-[1.6rem] border-[7px] border-ink/70" : "rounded-xl border border-rule", className]} style={style}>
+  {bar && !tablet && (
+    <div class="flex items-center gap-1.5 border-b border-rule bg-paper-sunken px-3 py-2">
+      <i class="h-2 w-2 rounded-full bg-destructive/70"></i><i class="h-2 w-2 rounded-full bg-warning/80"></i><i class="h-2 w-2 rounded-full bg-success/80"></i>
+      <span class="ml-3 h-4 flex-1 rounded-md bg-ink/[0.06]"></span>
+    </div>
+  )}
+  <slot />
+</div>

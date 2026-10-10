@@ -57,7 +57,7 @@ export const th: DeepPartial<Dict> = {
     },
   },
   footer: {
-    built: "สร้างด้วย Next.js, TypeScript และ Tailwind CSS",
+    built: "สร้างด้วย Astro, TypeScript และ Tailwind CSS",
     rights: "สงวนลิขสิทธิ์",
     email: "อีเมล",
     games: "เกม",

@@ -1,0 +1,62 @@
+---
+/** Friendly flat mascots. Fur colours are fixed per animal; the scarf follows the job's accent. */
+type Kind = "bear" | "fox" | "owl" | "cat" | "rabbit" | "penguin";
+const { kind = "bear", class: className = "h-28 w-24" } = Astro.props as { kind?: Kind; class?: string };
+const eye = "#1f2933";
+---
+<svg viewBox="0 0 100 112" class={className} aria-hidden="true">
+  {kind === "bear" && (<>
+    <circle cx="26" cy="22" r="11" fill="#b9814f" /><circle cx="74" cy="22" r="11" fill="#b9814f" />
+    <circle cx="26" cy="22" r="5.5" fill="#f2c9a0" /><circle cx="74" cy="22" r="5.5" fill="#f2c9a0" />
+    <ellipse cx="50" cy="92" rx="28" ry="20" fill="#c98f5a" />
+    <circle cx="50" cy="46" r="32" fill="#c98f5a" />
+    <ellipse cx="50" cy="56" rx="14" ry="11" fill="#f2c9a0" />
+    <circle cx="38" cy="42" r="3.6" fill={eye} /><circle cx="62" cy="42" r="3.6" fill={eye} />
+    <ellipse cx="50" cy="52" rx="4.5" ry="3.2" fill={eye} /><path d="M45 60q5 5 10 0" stroke={eye} stroke-width="2" fill="none" stroke-linecap="round" />
+  </>)}
+  {kind === "fox" && (<>
+    <path d="M18 12l20 22-22 8z" fill="#ee8a3a" /><path d="M82 12L62 34l22 8z" fill="#ee8a3a" />
+    <path d="M22 18l12 14-14 5z" fill="#2b2b2b" /><path d="M78 18L66 32l14 5z" fill="#2b2b2b" />
+    <ellipse cx="50" cy="92" rx="26" ry="20" fill="#ee8a3a" />
+    <ellipse cx="50" cy="48" rx="34" ry="30" fill="#ee8a3a" />
+    <path d="M16 54q16 6 34 28 18-22 34-28-8 24-34 30-26-6-34-30z" fill="#fff" />
+    <circle cx="37" cy="44" r="3.4" fill={eye} /><circle cx="63" cy="44" r="3.4" fill={eye} />
+    <ellipse cx="50" cy="64" rx="4" ry="3" fill={eye} />
+  </>)}
+  {kind === "owl" && (<>
+    <path d="M24 14l10 14H18zM76 14L66 28h16z" fill="#7b68c8" />
+    <ellipse cx="50" cy="68" rx="34" ry="38" fill="#8d7ad6" />
+    <ellipse cx="50" cy="80" rx="20" ry="22" fill="#d9d1f5" />
+    <circle cx="35" cy="48" r="14" fill="#fff" /><circle cx="65" cy="48" r="14" fill="#fff" />
+    <circle cx="35" cy="49" r="6.5" fill={eye} /><circle cx="65" cy="49" r="6.5" fill={eye} />
+    <circle cx="37" cy="47" r="2" fill="#fff" /><circle cx="67" cy="47" r="2" fill="#fff" />
+    <path d="M45 58l5 9 5-9z" fill="#f4a825" />
+  </>)}
+  {kind === "cat" && (<>
+    <path d="M18 10l22 20-24 10zM82 10L60 30l24 10z" fill="#8fa0ad" />
+    <path d="M23 18l11 10-12 5zM77 18L66 28l12 5z" fill="#f6b8c4" />
+    <ellipse cx="50" cy="94" rx="26" ry="18" fill="#9aabb7" />
+    <ellipse cx="50" cy="50" rx="34" ry="30" fill="#9aabb7" />
+    <ellipse cx="38" cy="46" rx="4" ry="5" fill={eye} /><ellipse cx="62" cy="46" rx="4" ry="5" fill={eye} />
+    <path d="M46 58l4 3 4-3z" fill="#f08aa0" /><path d="M50 61v4M44 66q6 4 6-1 0 5 6 1" stroke={eye} stroke-width="1.6" fill="none" stroke-linecap="round" />
+    <path d="M12 56l16 3M12 64l16-2M88 56L72 59M88 64l-16-2" stroke="#fff" stroke-width="1.4" stroke-linecap="round" />
+  </>)}
+  {kind === "rabbit" && (<>
+    <ellipse cx="36" cy="22" rx="9" ry="22" fill="#f4f1ee" /><ellipse cx="64" cy="22" rx="9" ry="22" fill="#f4f1ee" />
+    <ellipse cx="36" cy="24" rx="4.5" ry="15" fill="#f6b8c4" /><ellipse cx="64" cy="24" rx="4.5" ry="15" fill="#f6b8c4" />
+    <ellipse cx="50" cy="94" rx="26" ry="18" fill="#f4f1ee" />
+    <circle cx="50" cy="56" r="29" fill="#f8f6f3" />
+    <circle cx="39" cy="52" r="3.4" fill={eye} /><circle cx="61" cy="52" r="3.4" fill={eye} />
+    <circle cx="32" cy="62" r="5" fill="#f6b8c4" opacity=".7" /><circle cx="68" cy="62" r="5" fill="#f6b8c4" opacity=".7" />
+    <ellipse cx="50" cy="60" rx="3.4" ry="2.6" fill="#f08aa0" /><path d="M45 66q5 4 10 0" stroke={eye} stroke-width="1.8" fill="none" stroke-linecap="round" />
+  </>)}
+  {kind === "penguin" && (<>
+    <ellipse cx="50" cy="66" rx="34" ry="42" fill="#2f3b4a" />
+    <ellipse cx="50" cy="74" rx="22" ry="30" fill="#fff" />
+    <circle cx="40" cy="42" r="6" fill="#fff" /><circle cx="60" cy="42" r="6" fill="#fff" />
+    <circle cx="41" cy="43" r="2.8" fill={eye} /><circle cx="59" cy="43" r="2.8" fill={eye} />
+    <path d="M44 52h12l-6 8z" fill="#f4a825" />
+    <ellipse cx="38" cy="108" rx="9" ry="4" fill="#f4a825" /><ellipse cx="62" cy="108" rx="9" ry="4" fill="#f4a825" />
+  </>)}
+  <path d="M30 70q20 14 40 0v9q-20 14-40 0z" class="fill-accent" />
+</svg>

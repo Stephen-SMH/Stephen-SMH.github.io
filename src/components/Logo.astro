@@ -1,0 +1,27 @@
+---
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { withBase } from "./ui";
+
+/**
+ * Company mark. Drop a real logo at public/logos/<slug>.(svg|png|webp|jpg) and it
+ * is used automatically; until then a monogram tile is shown.
+ */
+const { name, size = "md" } = Astro.props as { name: string; size?: "sm" | "md" };
+const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const ext = ["svg", "png", "webp", "jpg"].find((e) => existsSync(join(process.cwd(), "public", "logos", `${slug}.${e}`)));
+const words = name.replace(/\b(co|ltd|co\.|international)\b\.?/gi, "").split(/\s+/).filter(Boolean);
+const initials = (words.length > 1 ? words[0][0] + words[1][0] : words[0].slice(0, 2)).toUpperCase();
+let h = 0;
+for (const c of name) h = (h * 31 + c.charCodeAt(0)) % 360;
+const dim = size === "sm" ? "h-9 w-9 text-[12px] rounded-lg" : "h-14 w-14 text-[17px] rounded-2xl";
+---
+{ext ? (
+  <img src={withBase(`/logos/${slug}.${ext}`)} alt={`${name} logo`} loading="lazy" class:list={[dim, "bg-white object-contain p-1.5 ring-1 ring-inset ring-rule"]} />
+) : (
+  <span
+    aria-hidden="true"
+    class:list={[dim, "grid shrink-0 place-items-center font-display font-semibold tracking-tight text-white ring-1 ring-inset ring-white/20"]}
+    style={`background:linear-gradient(135deg,hsl(${h} 55% 42%),hsl(${(h + 40) % 360} 60% 32%))`}
+  >{initials}</span>
+)}

@@ -1,0 +1,196 @@
+---
+/**
+ * One distinct, brand-neutral product "hero" per job: different devices, arrangement and mascot
+ * placement, on a stage tinted with the job's hue. Everything is HTML/SVG + theme tokens.
+ */
+import Animal from "./Animal.astro";
+import Phone from "./Phone.astro";
+import Win from "./Win.astro";
+
+type Kind = "bear" | "fox" | "owl" | "cat" | "rabbit" | "penguin";
+const { v = "a", animal = "bear" } = Astro.props as { v?: string; animal?: Kind };
+const ln = "block h-1.5 rounded-full bg-ink/10";
+const pill = "rounded-full px-2 py-0.5 text-[9px] font-medium";
+const bars = [38, 56, 44, 70, 52, 84, 66];
+const plus = "M12 4v16M4 12h16";
+---
+<div class="stage relative mx-auto h-[24rem] w-full max-w-[36rem] rounded-[2rem]" aria-hidden="true">
+  {/* A: twin phones, sparkles, mascot peeking */}
+  {v === "a" && (<>
+    <Phone class="absolute left-[10%] -top-8 h-[21rem] w-44">
+      <div class="rounded-xl bg-accent p-3 text-accent-ink"><p class="text-[9px] opacity-80">Good morning</p><p class="font-display text-lg font-semibold">09:11</p></div>
+      <div class="mt-3 grid grid-cols-3 gap-2">{Array.from({ length: 9 }).map((_, n) => <i class:list={["h-9 rounded-xl", n % 3 === 0 ? "bg-accent-soft" : n % 3 === 1 ? "bg-success-soft" : "bg-warning-soft"]}></i>)}</div>
+      <div class="mt-3 space-y-2"><i class:list={[ln, "w-full"]}></i><i class:list={[ln, "w-3/4"]}></i></div>
+    </Phone>
+    <Phone class="absolute right-[14%] top-6 h-[21rem] w-44">
+      <div class="flex items-center gap-2"><i class="h-9 w-9 rounded-full bg-accent"></i><div class="flex-1 space-y-1.5"><i class:list={[ln, "w-3/4"]}></i><i class:list={[ln, "w-1/2"]}></i></div></div>
+      <div class="mt-3 grid grid-cols-2 gap-2"><div class="rounded-lg bg-accent-soft p-2 text-[10px] font-semibold text-accent-soft-ink">1,200<p class="text-[8px] font-normal opacity-70">points</p></div><div class="rounded-lg bg-warning-soft p-2 text-[10px] font-semibold text-warning-soft-ink">200<p class="text-[8px] font-normal opacity-70">coins</p></div></div>
+      <div class="mt-3 flex gap-1.5">{[0,1,2,3].map(() => <i class="h-8 flex-1 rounded-lg bg-accent/70"></i>)}</div>
+      <div class="mt-3 space-y-1.5">{[0,1,2].map(() => <span class:list={[pill, "block bg-ink/[0.07] text-ink-soft"]}>Thank you x20</span>)}</div>
+    </Phone>
+    <svg viewBox="0 0 24 24" class="absolute right-3 top-8 h-9 w-9 text-accent" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d={plus} /></svg>
+    <svg viewBox="0 0 24 24" class="absolute right-0 top-24 h-5 w-5 text-warning" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d={plus} /></svg>
+    <Animal kind={animal} class="absolute -bottom-6 -right-4 z-20 h-40 w-36" />
+  </>)}
+
+  {/* B: desktop kanban + phone, mascot bottom-left */}
+  {v === "b" && (<>
+    <Win class="absolute left-3 top-6 h-[15.5rem] w-[78%]">
+      <div class="grid h-full grid-cols-3 gap-2 p-3">
+        {[["New", "bg-accent"], ["In review", "bg-warning"], ["Won", "bg-success"]].map(([t, c], col) => (
+          <div class="rounded-lg bg-paper-sunken p-2">
+            <p class="mb-2 flex items-center gap-1.5 text-[9px] font-medium text-ink-soft"><i class:list={["h-1.5 w-1.5 rounded-full", c]}></i>{t}</p>
+            {Array.from({ length: 2 - (col === 2 ? 1 : 0) }).map((_, k) => (
+              <div class="mb-2 rounded-md border border-rule bg-core p-2"><i class:list={[ln, k ? "w-2/3" : "w-full"]}></i><i class:list={[ln, "mt-1.5 w-1/2"]}></i><span class:list={[pill, "mt-2 inline-block bg-accent-soft text-accent-soft-ink"]}>${(k + 2) * 120}k</span></div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </Win>
+    <Phone class="absolute -bottom-6 right-2 z-10 h-[17rem] w-36">
+      <p class="text-[9px] font-medium text-ink-soft">My deals</p>
+      {[0,1,2,3].map(() => <div class="mt-2 flex items-center gap-2 rounded-lg border border-rule p-1.5"><i class="h-5 w-5 shrink-0 rounded-full bg-accent-soft"></i><div class="flex-1 space-y-1"><i class:list={[ln, "w-4/5"]}></i><i class:list={[ln, "w-1/2"]}></i></div></div>)}
+    </Phone>
+    <Animal kind={animal} class="absolute -bottom-8 -left-6 z-20 h-40 w-36" />
+  </>)}
+
+  {/* C: tablet chat, mascot bottom-right */}
+  {v === "c" && (<>
+    <Win tablet class="absolute left-2 top-8 h-[17rem] w-[92%]">
+      <div class="flex h-full">
+        <div class="w-1/3 space-y-2 border-r border-rule p-3">{[0,1,2,3].map((n) => <div class:list={["flex items-center gap-2 rounded-lg p-1.5", n === 0 && "bg-accent-soft"]}><i class="h-6 w-6 shrink-0 rounded-full bg-ink/15"></i><div class="flex-1 space-y-1"><i class:list={[ln, "w-3/4"]}></i><i class:list={[ln, "w-1/2"]}></i></div></div>)}</div>
+        <div class="flex flex-1 flex-col justify-end gap-2 p-3">
+          <span class="max-w-[60%] rounded-2xl rounded-bl-sm bg-ink/10 px-3 py-2 text-[10px] text-ink-soft">Does the UI kit support dark mode?</span>
+          <span class="ml-auto max-w-[65%] rounded-2xl rounded-br-sm bg-accent px-3 py-2 text-[10px] text-accent-ink">Yes. Tests pass in both themes.</span>
+          <div class="flex items-center gap-2"><span class:list={[pill, "bg-success-soft text-success-soft-ink"]}>✓ 48 passed</span><span class:list={[pill, "bg-warning-soft text-warning-soft-ink"]}>2 flaky</span></div>
+        </div>
+      </div>
+    </Win>
+    <Animal kind={animal} class="absolute -bottom-8 right-2 z-20 h-44 w-40" />
+  </>)}
+
+  {/* D: tilted laptop with terminal */}
+  {v === "d" && (<>
+    <div class="absolute left-4 top-6 w-[86%] -rotate-6">
+      <Win class="h-[14rem]">
+        <div class="space-y-1.5 bg-paper-sunken p-4 font-mono text-[11px] leading-relaxed h-full">
+          <p class="text-ink-faint">&gt; Show revenue by month for 2025</p>
+          <p><span class="text-accent">SELECT</span> month, SUM(total)</p>
+          <p><span class="text-accent">FROM</span> orders <span class="text-accent">GROUP BY</span> month;</p>
+          <div class="flex flex-wrap gap-2 pt-1">{["parse", "validate", "optimise"].map((s) => <span class:list={[pill, "bg-success-soft text-success-soft-ink"]}>✓ {s}</span>)}</div>
+          <div class="flex h-12 items-end gap-1.5 pt-2">{bars.map((h) => <i class="block flex-1 rounded-t bg-accent" style={`height:${h}%`}></i>)}</div>
+        </div>
+      </Win>
+      <div class="mx-auto h-3 w-[108%] -translate-x-[4%] rounded-b-2xl bg-ink/25"></div>
+      <div class="mx-auto h-1 w-24 rounded-b-full bg-ink/35"></div>
+    </div>
+    <Animal kind={animal} class="absolute -top-8 -right-3 z-20 h-32 w-28 rotate-6" />
+  </>)}
+
+  {/* E: conveyor belt dashboard */}
+  {v === "e" && (<>
+    <Win class="absolute left-2 top-4 h-[13rem] w-[90%]">
+      <div class="p-3">
+        <div class="grid grid-cols-3 gap-2">{[["Belt 02", "OK"], ["Speed", "0.8 m/s"], ["Items", "1,204"]].map(([k, val]) => <div class="rounded-lg border border-rule p-2"><p class="text-[9px] text-ink-faint">{k}</p><p class="font-display text-sm font-semibold text-ink">{val}</p></div>)}</div>
+        <div class="mt-3 flex h-16 items-end gap-1.5 rounded-lg bg-accent-soft p-2">{bars.concat(bars).map((h) => <i class="block flex-1 rounded-t bg-accent" style={`height:${h}%`}></i>)}</div>
+      </div>
+    </Win>
+    <div class="absolute bottom-6 left-0 right-0 overflow-hidden">
+      <div class="belt flex w-[200%] gap-8 px-4">{Array.from({ length: 12 }).map((_, n) => <i class:list={["h-9 w-9 shrink-0 rounded-lg", n % 3 === 0 ? "bg-accent" : n % 3 === 1 ? "bg-warning/80" : "bg-success/80"]}></i>)}</div>
+      <div class="mt-1 flex items-center gap-4 rounded-full bg-ink/20 px-3 py-1">{Array.from({ length: 14 }).map(() => <i class="h-2 w-2 rounded-full bg-ink/40"></i>)}</div>
+    </div>
+    <Animal kind={animal} class="absolute -top-10 right-4 z-20 h-32 w-28" />
+  </>)}
+
+  {/* F: phone fan, three different screens */}
+  {v === "f" && (<>
+    <Phone class="absolute left-[4%] top-4 h-[19rem] w-40 -rotate-12">
+      <p class="text-[9px] font-medium text-ink-soft">Chats</p>
+      {[0,1,2,3,4].map(() => <div class="mt-2 flex items-center gap-2"><i class="h-6 w-6 rounded-full bg-accent-soft"></i><div class="flex-1 space-y-1"><i class:list={[ln, "w-3/4"]}></i><i class:list={[ln, "w-1/2"]}></i></div></div>)}
+    </Phone>
+    <Phone class="absolute right-[4%] top-4 h-[19rem] w-40 rotate-12">
+      <p class="text-[9px] font-medium text-ink-soft">Insights</p>
+      <div class="mt-2 flex h-16 items-end gap-1 rounded-lg bg-accent-soft p-2">{bars.map((h) => <i class="block flex-1 rounded-t bg-accent" style={`height:${h}%`}></i>)}</div>
+      <div class="mt-2 grid grid-cols-2 gap-1.5">{[0,1,2,3].map((n) => <i class:list={["h-10 rounded-lg", n % 2 ? "bg-success-soft" : "bg-warning-soft"]}></i>)}</div>
+    </Phone>
+    <Phone class="absolute left-1/2 -top-6 z-10 h-[21rem] w-44 -translate-x-1/2">
+      <div class="flex h-[18rem] flex-col justify-end gap-2">
+        <span class="w-4/5 rounded-2xl rounded-bl-sm bg-ink/10 px-2.5 py-2 text-[10px] text-ink-soft">Summarise this call</span>
+        <span class="ml-auto w-5/6 rounded-2xl rounded-br-sm bg-accent px-2.5 py-2 text-[10px] text-accent-ink">3 action items found. Want me to draft the follow-up?</span>
+        <i class="block h-7 rounded-full border border-rule"></i>
+      </div>
+    </Phone>
+    <Animal kind={animal} class="absolute -bottom-8 -left-4 z-20 h-36 w-32" />
+  </>)}
+
+  {/* G: map phone with floating cards */}
+  {v === "g" && (<>
+    <Phone class="absolute left-1/2 -top-8 h-[23rem] w-52 -translate-x-1/2">
+      <div class="relative h-[19rem] overflow-hidden rounded-xl bg-accent-soft">
+        <svg viewBox="0 0 160 220" class="absolute inset-0 h-full w-full" fill="none" stroke="currentColor" class="text-accent/40">
+          {[30,70,110,150,190].map((y) => <path d={`M0 ${y}H160`} stroke="currentColor" stroke-width="1" class="text-ink/10" />)}
+          {[30,60,100,130].map((x) => <path d={`M${x} 0V220`} stroke="currentColor" stroke-width="1" class="text-ink/10" />)}
+          <path d="M20 190C50 170 40 120 80 110S130 60 120 30" class="stroke-accent" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 7" />
+        </svg>
+        <i class="absolute left-4 top-[84%] h-3 w-3 rounded-full bg-success ring-4 ring-success-soft"></i>
+        <i class="absolute right-8 top-[10%] h-4 w-4 rounded-full bg-accent ring-4 ring-accent-soft"></i>
+      </div>
+    </Phone>
+    <div class="absolute left-0 top-16 rounded-xl border border-rule bg-core p-3 shadow-lg"><p class="text-[9px] text-ink-faint">ETA</p><p class="font-display text-lg font-semibold text-ink">12 min</p></div>
+    <div class="absolute right-0 top-44 rounded-xl border border-rule bg-core p-3 shadow-lg"><p class="text-[9px] text-ink-faint">Speed</p><p class="font-display text-lg font-semibold text-accent">42 km/h</p></div>
+    <Animal kind={animal} class="absolute -bottom-8 -left-2 z-20 h-36 w-32" />
+  </>)}
+
+  {/* H: emissions dashboard with donut + line */}
+  {v === "h" && (<>
+    <Win class="absolute left-2 top-6 h-[16rem] w-[92%]">
+      <div class="grid h-full grid-cols-[0.9fr_1.1fr] gap-3 p-4">
+        <div class="grid place-items-center rounded-xl bg-accent-soft">
+          <svg viewBox="0 0 80 80" class="h-28 w-28 -rotate-90"><circle cx="40" cy="40" r="30" fill="none" stroke-width="9" class="stroke-ink/10" /><circle cx="40" cy="40" r="30" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="132 188" class="stroke-accent" /></svg>
+          <p class="-mt-20 font-display text-xl font-semibold text-ink">70%</p>
+        </div>
+        <div class="space-y-3">
+          <svg viewBox="0 0 120 50" class="h-20 w-full" fill="none"><path d="M0 40C20 30 30 44 50 26S90 30 120 8" class="stroke-accent" stroke-width="2.5" stroke-linecap="round" /><path d="M0 40C20 30 30 44 50 26S90 30 120 8V50H0z" class="fill-accent/10 stroke-none" /></svg>
+          <div class="space-y-2">{["Vehicles", "Factories"].map((t, k) => <div class="flex items-center justify-between gap-2 text-[10px] text-ink-soft"><span>{t}</span><i class:list={["h-1.5 rounded-full bg-accent", k ? "w-10" : "w-20"]}></i></div>)}</div>
+        </div>
+      </div>
+    </Win>
+    <Animal kind={animal} class="absolute -bottom-8 -right-2 z-20 h-40 w-36" />
+  </>)}
+
+  {/* I: design canvas with artboards, layers and swatches */}
+  {v === "i" && (<>
+    <Win class="absolute left-2 top-6 h-[16rem] w-[92%]">
+      <div class="grid h-full grid-cols-[0.7fr_2fr_0.8fr]">
+        <div class="space-y-2 border-r border-rule p-3">{[0,1,2,3,4].map((n) => <div class="flex items-center gap-1.5"><i class:list={["h-2.5 w-2.5 rounded-sm", n === 1 ? "bg-accent" : "bg-ink/20"]}></i><i class:list={[ln, "flex-1"]}></i></div>)}</div>
+        <div class="flex items-center justify-center gap-3 bg-paper-sunken p-3">
+          <div class="h-32 w-16 rounded-xl border border-rule bg-core p-1.5"><i class="block h-8 rounded-lg bg-accent"></i><i class:list={[ln, "mt-2 w-full"]}></i><i class:list={[ln, "mt-1.5 w-2/3"]}></i></div>
+          <div class="h-36 w-20 rounded-xl border-2 border-accent bg-core p-1.5"><i class="block h-10 rounded-lg bg-accent-soft"></i><div class="mt-2 grid grid-cols-2 gap-1">{[0,1,2,3].map(() => <i class="h-6 rounded-md bg-ink/10"></i>)}</div></div>
+          <div class="h-32 w-16 rounded-xl border border-rule bg-core p-1.5"><i class="block h-8 rounded-lg bg-warning/60"></i><i class:list={[ln, "mt-2 w-full"]}></i></div>
+        </div>
+        <div class="space-y-2 border-l border-rule p-3"><p class="text-[9px] text-ink-faint">Fill</p><div class="flex gap-1.5"><i class="h-4 w-4 rounded-full bg-accent"></i><i class="h-4 w-4 rounded-full bg-warning"></i><i class="h-4 w-4 rounded-full bg-success"></i></div><i class:list={[ln, "w-full"]}></i><i class:list={[ln, "w-2/3"]}></i></div>
+      </div>
+    </Win>
+    <Animal kind={animal} class="absolute -bottom-8 -left-4 z-20 h-40 w-36" />
+  </>)}
+
+  {/* J: admin table with a popover card */}
+  {v === "j" && (<>
+    <Win class="absolute left-2 top-6 h-[16rem] w-[92%]">
+      <div class="flex h-full">
+        <div class="flex w-10 flex-col items-center gap-3 border-r border-rule bg-paper-sunken py-3">{[0,1,2,3].map((n) => <i class:list={["h-4 w-4 rounded-md", n === 1 ? "bg-accent" : "bg-ink/15"]}></i>)}</div>
+        <div class="flex-1 p-3">
+          <div class="mb-2 flex gap-1.5">{["All", "Open", "Done"].map((t, n) => <span class:list={[pill, n === 0 ? "bg-accent text-accent-ink" : "bg-ink/[0.07] text-ink-soft"]}>{t}</span>)}</div>
+          {[0,1,2,3,4].map((n) => (
+            <div class:list={["grid grid-cols-[1.2fr_0.8fr_0.7fr] items-center gap-2 rounded-md px-2 py-1.5", n % 2 === 0 && "bg-paper-sunken"]}>
+              <span class="flex items-center gap-1.5"><i class="h-4 w-4 rounded-full bg-ink/15"></i><i class:list={[ln, "w-12"]}></i></span><i class:list={[ln, "w-3/4"]}></i>
+              <span class:list={[pill, "w-fit", n % 3 === 0 ? "bg-success-soft text-success-soft-ink" : "bg-accent-soft text-accent-soft-ink"]}>{n % 3 === 0 ? "Done" : "Open"}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Win>
+    <div class="absolute -right-2 bottom-2 z-10 w-40 rounded-xl border border-rule bg-core p-3 shadow-xl"><p class="text-[10px] font-semibold text-ink">Add record</p><i class:list={[ln, "mt-2 w-full"]}></i><i class:list={[ln, "mt-1.5 w-2/3"]}></i><div class="mt-3 rounded-full bg-accent py-1 text-center text-[9px] font-medium text-accent-ink">Save</div></div>
+    <Animal kind={animal} class="absolute -bottom-8 -left-4 z-20 h-40 w-36" />
+  </>)}
+</div>

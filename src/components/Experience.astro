@@ -1,44 +1,60 @@
 ---
 import type { Dict } from "@/content";
+import Logo from "./Logo.astro";
+import Showcase from "./Showcase.astro";
 import Reveal from "./Reveal.astro";
 import Section from "./Section.astro";
 import SectionHead from "./SectionHead.astro";
 import TagList from "./TagList.astro";
+import { highlight } from "./ui";
+
+const extra = ["Next.js", "Kotlin", "Spring Boot", "Docker", "Docker Compose", "docker-compose", "Render", "Playwright", "Jira", "Flask", "WebSocket", "ZeroMQ", "Cursor", "Agno", "CopilotKit", "n8n", "Context Hub", "LlamaIndex"];
+
+const SHOWS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+const HUES = [318, 262, 236, 290, 342, 250, 224, 304, 272, 330];
+const ANIMALS = ["bear", "fox", "owl", "cat", "rabbit", "penguin", "fox", "bear", "cat", "owl"] as const;
 
 const { experience } = Astro.props as { experience: Dict["experience"] };
 ---
-<Section id="experience">
+<Section id="experience" class="cs-theme relative">
+  <div aria-hidden="true" class="cs-blob pointer-events-none absolute inset-x-0 top-24 -z-10 h-[46rem]"></div>
   <SectionHead title={experience.title} />
 
-  <ol>
+  <ol class="cs-line relative pl-6 sm:pl-12">
     {experience.items.map((job, i) => (
-      <li>
-        {i > 0 && <div class="draw-rule" data-rule></div>}
-        <div class="grid gap-6 py-12 md:grid-cols-[0.34fr_0.66fr] md:gap-12">
-          <Reveal class="md:sticky md:top-28 md:self-start">
-            <p class="font-mono text-[13px] text-accent">{job.period}</p>
-            <h3 class="mt-3 font-display text-2xl font-semibold leading-tight tracking-tight text-ink">{job.org}</h3>
-            {(job.place || job.kind) && (
-              <p class="mt-2 text-[13.5px] leading-snug text-ink-soft">
-                {[job.place, job.kind].filter(Boolean).join(", ")}
-              </p>
-            )}
-          </Reveal>
+      <li class="relative pb-20 last:pb-0 sm:pb-28">
+        <span aria-hidden="true" class="cs-dot absolute -left-[31px] top-2 h-3.5 w-3.5 rounded-full sm:-left-[55px]"></span>
+        <Reveal>
+          <div class="relative">
 
-          <Reveal>
-            <h4 class="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">{job.role}</h4>
-            <p class="mt-4 max-w-[62ch] text-[16px] leading-[1.75] text-ink">{job.summary}</p>
-            <ul class="mt-6 space-y-3.5" data-stagger-list>
-              {job.bullets.map((b) => (
-                <li class="flex gap-4 text-[14.5px] leading-[1.75] text-ink-soft">
-                  <span aria-hidden="true" data-bullet-dash class="mt-[0.8em] h-px w-4 shrink-0 origin-left bg-accent"></span>
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-            <TagList tags={job.tags} />
-          </Reveal>
-        </div>
+            <div class="relative flex items-center gap-4">
+              <Logo name={job.org} />
+              <div>
+                <h3 class="font-display text-2xl font-semibold leading-tight tracking-tight text-ink sm:text-3xl">{job.org}</h3>
+                <p class="cs-pill mt-1.5 inline-flex rounded-full px-3 py-0.5 font-mono text-[12px]">
+                  {job.period}{(job.place || job.kind) && ` · ${[job.place, job.kind].filter(Boolean).join(", ")}`}
+                </p>
+              </div>
+            </div>
+
+            <div class="relative mt-8 grid items-start gap-10 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
+            <div class="max-w-[70ch]">
+              <h4 class="font-display text-xl font-semibold tracking-tight text-ink">{job.role}</h4>
+              <p class="mt-3 text-[16px] leading-[1.75] text-ink" set:html={highlight(job.summary, [...job.tags, ...extra])} />
+              <ul class="mt-6 space-y-3.5" data-stagger-list>
+                {job.bullets.map((b) => (
+                  <li class="flex gap-4 text-[14.5px] leading-[1.75] text-ink-soft">
+                    <span aria-hidden="true" data-bullet-dash class="mt-[0.8em] h-px w-4 shrink-0 origin-left bg-accent"></span>
+                    <span set:html={highlight(b, [...job.tags, ...extra])} />
+                  </li>
+                ))}
+              </ul>
+              <TagList tags={job.tags} />
+            </div>
+            <div class:list={["mock-theme pb-10 pt-8 xl:sticky xl:top-28", i % 2 === 1 && "xl:order-first"]} style={`--h:${HUES[i % HUES.length]}`}><Showcase v={SHOWS[i % SHOWS.length]} animal={ANIMALS[i % ANIMALS.length]} /></div>
+            </div>
+          </div>
+        </Reveal>
       </li>
     ))}
   </ol>

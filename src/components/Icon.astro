@@ -1,0 +1,26 @@
+---
+const PATHS: Record<string, string> = {
+  sparkles: "M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8zM19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z",
+  shield: "M12 3l8 3v5c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6z M9 12l2 2 4-4",
+  layers: "M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17.5l9 5 9-5",
+  flask: "M9 3h6M10 3v6L5 19a1.5 1.5 0 001.3 2.2h11.4A1.5 1.5 0 0019 19l-5-10V3M7.5 14h9",
+  server: "M4 5h16v6H4zM4 13h16v6H4zM8 8h.01M8 16h.01",
+  rocket: "M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2M14 4c3-1 6-1 6-1s0 3-1 6l-6 6-5-5zM9 12l-4-1 2-3 4-.5M12 15l1 4 3-2 .5-4",
+  pin: "M12 21s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12zM12 11.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z",
+  cap: "M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.2 2.7 3 6 3s6-1.8 6-3v-4.5",
+  trophy: "M8 4h8v6a4 4 0 01-8 0zM8 6H4v1a4 4 0 004 4M16 6h4v1a4 4 0 01-4 4M12 14v4M8 21h8M10 18h4",
+  globe: "M12 21a9 9 0 100-18 9 9 0 000 18zM3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9S9.5 5.5 12 3z",
+  wrench: "M14.7 6.3a4 4 0 005 5L21 12.5 12.5 21 3 11.5 11.5 3z",
+  layout: "M4 4h16v16H4zM4 9h16M9 9v11",
+  database: "M12 8c4.4 0 8-1.3 8-3s-3.6-3-8-3-8 1.3-8 3 3.6 3 8 3zM4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3",
+  activity: "M3 12h4l3-8 4 16 3-8h4",
+  cloud: "M7 18a4.5 4.5 0 01-.5-9A6 6 0 0118 9.5 4.3 4.3 0 0117.5 18z",
+  code: "M8 8l-5 4 5 4M16 8l5 4-5 4M14 5l-4 14",
+  star: "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",
+  users: "M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM2.5 20c.5-3.5 3-5.5 6.5-5.5s6 2 6.5 5.5M16 4.5a3.5 3.5 0 010 6.5M18 14.8c2 .6 3.3 2.4 3.5 5.2",
+};
+const { name, class: className = "h-5 w-5" } = Astro.props as { name: string; class?: string };
+---
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class={className}>
+  <path d={PATHS[name] ?? PATHS.star} />
+</svg>

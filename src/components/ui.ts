@@ -38,3 +38,29 @@ export function withBase(path: string) {
   const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const reEsc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** Words that carry the point of a sentence; bolded in ink so the eye lands on them. */
+const KEY = [
+  "solo", "six", "production", "production-ready", "deployed", "RBAC", "server-side validation", "unified", "AI-native",
+  "agentic", "retrieval-augmented", "real-time", "end-to-end", "full stack", "reduced", "improving", "owned",
+];
+
+/**
+ * Escapes `text`, then highlights tech terms (blue chip) and key outcome words / numbers (amber marker).
+ * Returns HTML for set:html - input is escaped first, so it is safe for content strings.
+ */
+export function highlight(text: string, tech: string[] = []) {
+  const safe = esc(text);
+  const t = [...new Set(tech)].sort((a, b) => b.length - a.length).map((x) => reEsc(esc(x)));
+  const k = [...KEY].sort((a, b) => b.length - a.length).map((x) => reEsc(esc(x)));
+  const re = new RegExp(
+    `(?<![\\w-])(?:(${t.join("|") || "(?!)"})|(${k.join("|")})|(\\d[\\d,.~]*[k%x+]?))(?![\\w-])`,
+    "gi",
+  );
+  return safe.replace(re, (m, a, b, c) =>
+    a ? `<strong class="kw-tech">${m}</strong>` : `<strong class="kw-key">${m}</strong>`,
+  );
+}

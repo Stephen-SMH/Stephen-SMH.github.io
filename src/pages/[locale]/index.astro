@@ -8,6 +8,9 @@ import Footer from "@/components/Footer.astro";
 import Hero from "@/components/Hero.astro";
 import LangSwitcher from "@/components/LangSwitcher.astro";
 import { Nav } from "@/components/Nav";
+import Terminal from "@/components/Terminal.astro";
+import Build from "@/components/Build.astro";
+import Concepts from "@/components/Concepts.astro";
 import Notes from "@/components/Notes.astro";
 import Projects from "@/components/Projects.astro";
 import Skills from "@/components/Skills.astro";
@@ -34,12 +37,15 @@ const dict = getDict(locale);
     </Fragment>
   </Nav>
   <main id="main">
-    <Hero hero={dict.hero} contact={dict.contact.direct} />
+    <Hero hero={dict.hero} contact={dict.contact.direct} dict={dict} />
+    <Terminal dict={dict} />
     <About about={dict.about} />
+    <Build build={dict.build} />
     <Skills skills={dict.skills} />
+    <Concepts concepts={dict.concepts} />
     <Experience experience={dict.experience} />
     <Projects projects={dict.projects} />
-    <Notes notes={dict.notes} />
+    {dict.notes.items.length > 0 && <Notes notes={dict.notes} />}
     <Contact contact={dict.contact} />
   </main>
   <Footer dict={dict} />

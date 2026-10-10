@@ -57,62 +57,65 @@ export const en: Dict = {
     eyebrow: "How I work",
     title: "About",
     paragraphs: [
-      "I am a software engineer with a Software Engineering degree from KMITL, building production services and agentic AI systems. As a Forward Deployed Engineer at Tech Links Asia I shipped a social media management platform solo - from the data model and FastAPI / SQLAlchemy API through to a production-ready React and TypeScript frontend.",
-      "Before that, at Smart Shift Solutions, I built backend business logic in Kotlin and Spring Boot for Supali CRM and Supali DOA, implemented RBAC and server-side validation, and helped on Context Hub - an internal developer tool that answers questions by autonomously searching every project repository.",
-      "On AI my posture is AI-native: Claude Code and Cursor for implementation, debugging and review, with the quality bar held on everything generated. I design agent products with CopilotKit, A2A and AG-UI - structured input and output, prompt-injection defences and deterministic validation for reliable, auditable behaviour.",
-      "I care about how software reaches users: Docker and Docker Compose, CI/CD pipelines, and observability with Grafana and k6 load testing. I am familiar with production rollout strategies - canary releases, blue/green deployments and feature flags.",
+      "Software engineer building production services and agentic AI systems.",
+      "I shipped a social media platform solo at Tech Links Asia, and wrote Kotlin / Spring Boot backends at Smart Shift Solutions.",
     ],
     principles: [
       {
         title: "AI-native, human-reviewed",
-        body: "Claude Code and Cursor do the typing; I keep the quality bar on every generated line - implementation, debugging and code review.",
+        body: "Claude Code and Cursor write; I review every line.",
       },
       {
         title: "Deterministic validation",
-        body: "Agents get structured input and output, prompt-injection defences and deterministic checks, so behaviour stays reliable and auditable.",
+        body: "Structured I/O and injection defences keep agents auditable.",
       },
       {
         title: "One abstraction, many channels",
-        body: "Six platform APIs sit behind a single service registry, so a new integration plugs in without touching core logic.",
+        body: "Six platform APIs behind one service registry.",
       },
       {
         title: "Tested like a QA",
-        body: "A QA internship meant Playwright end-to-end tests, Jira bug tracking and release-readiness reviews - habits I bring to every build.",
+        body: "Playwright E2E, Jira tracking, release-readiness reviews.",
+      },
+      {
+        title: "Backend that holds up",
+        body: "Kotlin and Spring Boot, with RBAC and server-side validation.",
+      },
+      {
+        title: "Ships to production",
+        body: "Docker, CI/CD, Grafana and k6; canary and blue/green rollouts.",
       },
     ],
     collabTitle: "Collaboration",
     collab: [
       { label: "Tools", value: "Jira, Asana, Trello, GitHub, GitLab, Figma, TestMo, Claude Code, Cursor" },
-      {
-        label: "Working style",
-        value: "SCRUM and Agile collaboration - daily stand-ups, regression testing cycles and release-readiness reviews",
-      },
-      { label: "Availability", value: "Based in Bangkok (UTC+7); experienced with hybrid and remote work" }, // PLACEHOLDER
+      { label: "Working style", value: "SCRUM · Agile · stand-ups · regression cycles" },
+      { label: "Availability", value: "Bangkok (UTC+7) · hybrid or remote" }, // PLACEHOLDER
     ],
     educationTitle: "Education",
     education: [
       {
-        school: "King Mongkut’s Institute of Technology Ladkrabang",
-        degree: "Software Engineering - fresh graduate",
+        school: "KMITL",
+        degree: "B.Eng. Software Engineering",
         period: "2022 – 2026",
       },
       {
         school: "Yangon Technological University",
-        degree: "Information Technology - third year",
+        degree: "Information Technology",
         period: "2018 – 2021",
       },
     ],
     languagesTitle: "Languages",
     languages: [
-      { name: "Burmese", level: "Native" }, // PLACEHOLDER - not in resume
-      { name: "English", level: "Professional working proficiency" }, // PLACEHOLDER - not in resume
+      { name: "Burmese", level: "Native", bars: 5 }, // PLACEHOLDER - not in resume
+      { name: "English", level: "Professional", bars: 4 }, // PLACEHOLDER - not in resume
     ],
     awardsTitle: "Awards",
-    awards: ["ASEAN-INDIA Hackathon 2021 - winner", "Ooredoo Hackathon 2018 - Best Business Idea, Yangon, Myanmar"],
+    awards: ["ASEAN-INDIA Hackathon 2021 · winner", "Ooredoo Hackathon 2018 · Best Business Idea"],
     activitiesTitle: "Beyond work",
     activities: [
       {
-        title: "Teaching assistant, Introduction to Logic",
+        title: "Teaching assistant · Logic",
         body: "Wrote tutorials for each assignment and recorded offline video sessions on the lectures.",
       },
       {
@@ -120,17 +123,39 @@ export const en: Dict = {
         body: "Built a SAP Analytics storyboard on e-waste management trends, aligned with the UN SDGs.",
       },
       {
-        title: "Build-on Thailand, Pattaya 2023",
+        title: "Build-on Thailand 2023",
         body: "Pitched facial-recognition features for digital banking (organised by depa, AWS, KrungThai and Central Tech).",
       },
       {
-        title: "Arduino robotics competitions",
+        title: "Arduino robotics",
         body: "Built Arduino cars that sense objects, sound and vibration, with electric motors and micro-controllers.",
       },
       {
-        title: "UNCTAD Entrepreneurship Training Workshop",
+        title: "UNCTAD Entrepreneurship Workshop",
         body: "Certified programme on how start-up businesses work.",
       },
+    ],
+  },
+  build: {
+    eyebrow: "Idea to device",
+    title: "Code in, product out",
+    steps: [
+      { title: "Commit", desc: "Code is typed with AI as a pair, then pushed." },
+      { title: "Build", desc: "Containers are built on every push." },
+      { title: "Test", desc: "Unit and end-to-end tests gate the release." },
+      { title: "Deploy", desc: "It lands on a real phone, live." },
+    ],
+  },
+  concepts: {
+    eyebrow: "Engineering in pictures",
+    title: "How I think",
+    items: [
+      { tag: "Database", title: "Normalization", desc: "Split one wide table into related ones, so each fact lives in exactly one place." },
+      { tag: "DevOps", title: "CI/CD loop", desc: "Every commit is built, tested and deployed, then watched in production." },
+      { tag: "Full stack", title: "Request path", desc: "React in the browser, an API in the middle, PostgreSQL and a cache behind it." },
+      { tag: "Security", title: "Defence in depth", desc: "Auth, validation and encryption, so one failed layer is not a breach." },
+      { tag: "System design", title: "Scale out", desc: "A load balancer spreads traffic over stateless servers; reads hit a cache or replica." },
+      { tag: "Use case", title: "Social post scheduler", desc: "Who does what in the system: an actor, a boundary and the goals inside it." },
     ],
   },
   skills: {
@@ -443,70 +468,69 @@ export const en: Dict = {
         ],
         tags: ["Python", "Flask", "ZeroMQ", "React", "Docker"],
       },
-
-      // ---- PLACEHOLDERS: copied from the reference portfolio. Replace or delete. ----
       {
-        kicker: "Conexa · B2B networking & CRM platform",
-        title: "AI Connector - an in-product agentic assistant",
-        desc: "A streaming tool-use loop with 13 tools, one wire protocol implemented twice: TypeScript for web, Go for realtime.",
+        kicker: "Personal project · Local LLM infrastructure",
+        title: "LocalGate - an OpenAI-compatible gateway for local models",
+        desc: "A self-hosted control plane between applications and local inference servers such as Ollama: one stable API, a model registry, retries, circuit breakers and fallback models, API-key RBAC and Redis-backed rate limiting.",
         stats: [
-          { value: "13", label: "tools in the registry" },
-          { value: "2", label: "implementations, 1 protocol" },
-          { value: "3", label: "provider failover stages" },
-          { value: "0", label: "duplicated ACLs for the agent" },
+          { value: "OpenAI", label: "compatible API in front of local servers" },
+          { value: "RBAC", label: "API keys, roles and per-key rate limits" },
+          { value: "Resilient", label: "retries, circuit breakers, fallback models" },
         ],
-        tags: ["Agentic AI", "LLM", "TypeScript", "Go"],
-        placeholder: true,
+        tags: ["LLM", "Gateway", "Redis", "Ollama"],
       },
       {
-        kicker: "Conexa · Integration infrastructure",
-        title: "A Go MCP server - opening the platform to external agents",
-        desc: "Streamable HTTP, JWT verified at the edge, per-scope consent stored in PostgreSQL and requested through MCP elicitation.",
+        kicker: "Personal project · Multi-agent simulation",
+        title: "Food Delivery City - every character is an AI agent",
+        desc: "A real-time delivery platform on a 3D map where customers, managers, cooks, counter staff and riders are agents driven by a local LLM. Go services talk over RabbitMQ with Postgres, all in Docker.",
         stats: [
-          { value: "JWT", label: "verified at the edge" },
-          { value: "1×", label: "consent asked, revocable" },
-          { value: "MCP", label: "elicitation per scope" },
+          { value: "Agents", label: "every role on the map is an LLM agent" },
+          { value: "Events", label: "RabbitMQ with an outbox pattern" },
+          { value: "3D", label: "React + Three.js live client" },
         ],
-        tags: ["MCP", "Go", "Security"],
-        placeholder: true,
+        tags: ["Go", "RabbitMQ", "Three.js", "Agentic AI"],
       },
       {
-        kicker: "Conexa · Advertising automation for an e-commerce agency",
-        title: "An ads automation platform - three surfaces on one Go backend",
-        desc: "I built the system in TypeScript/Node, moved it to Go services myself with parity tests as the acceptance gate, then built the two Next.js surfaces on top: an operations console for the agency and a public landing site reading its CMS from that same backend.",
+        kicker: "Personal project · Cloud & DevOps",
+        title: "YoteShin Platform - production-style infrastructure on free tooling",
+        desc: "Infrastructure as code, Kubernetes, GitOps delivery, observability with SLOs and reliability practices for a short-drama streaming app, run locally on k3d and in the cloud with Terraform-managed resources.",
         stats: [
-          { value: "~91k", label: "lines of Go across 406 files" },
-          { value: "145", label: "test files alongside the Go build" },
-          { value: "6", label: "Go services replacing one Node process" },
-          { value: "52", label: "operations screens in the admin console" },
+          { value: "IaC", label: "Terraform-managed cloud resources" },
+          { value: "GitOps", label: "Kubernetes delivery" },
+          { value: "SLOs", label: "observability and reliability" },
         ],
-        tags: ["Go", "Microservices", "Next.js", "Agentic AI"],
-        placeholder: true,
+        tags: ["Kubernetes", "Terraform", "GitOps", "Observability"],
       },
       {
-        kicker: "Personal project · Playable on the web",
-        title: "Deep-sea spearfishing - a multiplayer 3D game in the browser",
-        desc: "A Go server owning every rule at a 20Hz tick, a Babylon.js client, one protobuf schema generating both sides - and voice chat riding that same WebSocket instead of WebRTC.",
+        kicker: "Personal project · Mobile",
+        title: "YoteShin - a Flutter studio app for publishing films to YouTube",
+        desc: "Uploads are handed to the OS transfer service so they continue in the background and resume from what YouTube already has after a dropped connection; a film shows as published only once YouTube returns its video ID.",
         stats: [
-          { value: "20Hz", label: "server-authoritative simulation tick" },
-          { value: "100", label: "players per room, tick under 50ms" },
-          { value: "~270KB", label: "gzip for the 3D bundle, a 9KB lobby" },
-          { value: "64kbps", label: "voice over WebSocket, no WebRTC" },
+          { value: "BG", label: "background uploads on iOS and Android" },
+          { value: "Resume", label: "continue from YouTube's received bytes" },
         ],
-        tags: ["Go", "Realtime", "Babylon.js", "WebSocket"],
-        placeholder: true,
+        tags: ["Flutter", "YouTube Data API", "Mobile"],
       },
       {
-        kicker: "Self-directed open-source project",
-        title: "NewEra AI Demo - agentic RAG for IoT and fintech",
-        desc: "A hand-written agent loop on the Claude Messages API, hybrid retrieval benchmarked across four configurations, and the same tools exposed over MCP.",
+        kicker: "Personal project · Burmese speech AI",
+        badge: "In progress",
+        title: "Zaga - a Burmese voice engine",
+        desc: "Text-to-speech, voice cloning and audiobooks for Burmese, starting with a finished text frontend (Zawgyi to Unicode, numbers as words, sentence splitting) ahead of model baselines and fine-tuning.",
         stats: [
-          { value: "4", label: "retriever configurations benchmarked" },
-          { value: "49", label: "automated tests" },
-          { value: "BM25+", label: "dense vectors fused with RRF" },
+          { value: "Text", label: "frontend complete" },
+          { value: "TTS", label: "baselines and fine-tuning next" },
         ],
-        tags: ["RAG", "MCP", "Python", "Claude API"],
-        placeholder: true,
+        tags: ["Python", "TTS", "NLP", "Burmese"],
+      },
+      {
+        kicker: "Personal project · AI chat",
+        title: "GenAI Language - a streaming Claude chat interface",
+        desc: "A Next.js 16 App Router chat UI that streams responses from Claude through the Vercel AI SDK.",
+        stats: [
+          { value: "Stream", label: "token streaming from Claude" },
+          { value: "Next 16", label: "App Router and server components" },
+        ],
+        tags: ["Next.js", "TypeScript", "Vercel AI SDK", "Claude API"],
       },
     ],
   },
@@ -514,31 +538,27 @@ export const en: Dict = {
     eyebrow: "Writing to think clearly",
     title: "Engineering notes",
     placeholderLabel: "Placeholder",
-    // ---- PLACEHOLDERS: copied from the reference portfolio. Replace or delete. ----
-    items: [
-      {
-        iso: "2026-06-02",
-        date: "02 Jun 2026",
-        read: "2 min read",
-        title: "Porting a TypeScript monolith to Go without behavioural drift",
-        desc: "I wrote the Node build, then moved it to Go myself. That sounds easier - until you notice that “I remember how it behaves” is not an acceptance criterion.",
-        tags: ["Go", "Migration", "Testing"],
-        placeholder: true,
-      },
-      {
-        iso: "2026-03-18",
-        date: "18 Mar 2026",
-        read: "2 min read",
-        title: "Do not write a separate ACL for your agent",
-        desc: "Once an AI assistant can write data, the scary part is not a wrong answer from the model. It is a second permission layer quietly drifting away from the real one.",
-        tags: ["Agentic AI", "Security", "Architecture"],
-        placeholder: true,
-      },
-    ],
+    items: [],
   },
   contact: {
     eyebrow: "Reply within 24 hours", // PLACEHOLDER (reference copy)
     title: "Get in touch",
+    chat: {
+      name: "Stephen",
+      online: "online · replies within 24 hours",
+      lead: "Pick a topic and we start talking.",
+      hello: "Hi, I'm Stephen. Thanks for stopping by.",
+      ask: "What brings you here?",
+      options: [
+        { label: "I'm hiring", subject: "Hiring: hello from your portfolio", reply: "Great, let's talk. Send me the role and team, and I'll reply within a day. Here is how to reach me:" },
+        { label: "I have a project", subject: "Project: hello from your portfolio", reply: "Nice. A few lines on the idea, the timeline and what success looks like is plenty to start. Reach me here:" },
+        { label: "Just saying hi", subject: "Hi from your portfolio", reply: "Hi back! Always happy to meet another builder. Say hello here:" },
+      ],
+      restart: "Start over",
+      copy: "Copy email",
+      copied: "Copied",
+      skip: "Prefer plain email?",
+    },
     form: {
       name: "Name",
       namePh: "Your name",
@@ -576,7 +596,7 @@ export const en: Dict = {
     },
   },
   footer: {
-    built: "Built with Next.js, TypeScript and Tailwind CSS.",
+    built: "Built with Astro, TypeScript and Tailwind CSS.",
     rights: "All rights reserved.",
     github: "GitHub",
     linkedin: "LinkedIn",

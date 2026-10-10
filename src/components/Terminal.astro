@@ -1,0 +1,280 @@
+---
+import type { Dict } from "@/content";
+import Animal from "./Animal.astro";
+import Section from "./Section.astro";
+import SectionHead from "./SectionHead.astro";
+
+const { dict } = Astro.props as { dict: Dict };
+const hero = dict.hero;
+const t = hero.terminal;
+const contact = dict.contact.direct;
+
+/* ---- command data for the interactive terminal (built from the same content as the page) ---- */
+type Line = string | { text: string; href: string };
+const clip = (x: string, n: number) => (x.length > n ? `${x.slice(0, n - 1)}…` : x);
+const cmds: Record<string, Line[]> = {
+  whoami: [t.whoami, `${hero.role} · ${hero.focus}`],
+  about: [dict.about.paragraphs[0], dict.about.paragraphs[1], "", ...dict.about.principles.map((p) => `• ${p.title}: ${p.body}`)],
+  skills: dict.skills.groups.map((g) => `• ${g.title}: ${g.tags.slice(0, 4).join(", ")}${g.tags.length > 4 ? ", …" : ""}`),
+  experience: dict.experience.items.map((j) => `• ${j.org} · ${j.role} (${j.period})`),
+  projects: dict.projects.items.map((p) => `• ${p.title.split(" - ")[0]}  (${p.kicker.split(" · ")[0]})`),
+  education: dict.about.education.map((e) => `• ${e.school} · ${e.degree} (${e.period})`),
+  awards: dict.about.awards.map((a) => `★ ${a}`),
+  stats: t.stats.map((x) => `• ${x.value}  ${x.label}`),
+  contact: [
+    { text: `email     ${contact.email}`, href: `mailto:${contact.email}` },
+    { text: `github    ${contact.githubUrl.replace("https://", "")}`, href: contact.githubUrl },
+    { text: `linkedin  ${clip(contact.linkedinUrl.replace("https://www.", ""), 40)}`, href: contact.linkedinUrl },
+    "phone     use the chat in the Contact section",
+  ],
+};
+const help = [
+  ["whoami", "who is this"],
+  ["about", "how I work"],
+  ["skills", "what I build with"],
+  ["experience", "where I worked"],
+  ["projects", "selected work"],
+  ["education", "degrees"],
+  ["awards", "hackathon wins"],
+  ["stats", "career in numbers"],
+  ["contact", "get in touch"],
+  ["theme", "toggle light / dark"],
+  ["goto <section>", "about, skills, experience, projects, contact"],
+  ["clear", "clean the screen"],
+];
+const termPayload = JSON.stringify({ cmds, help, names: Object.keys(cmds) });
+
+const kbRows: string[][] = [
+  ["esc", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "⌫"],
+  ["tab", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\"],
+  ["caps", "a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'", "return"],
+  ["shift", "z", "x", "c", "v", "b", "n", "m", ",", ".", "/", "shift"],
+  ["fn", "ctrl", "opt", "cmd", " ", "cmd", "opt", "◀", "▼", "▶"],
+];
+const wide: Record<string, number> = { "⌫": 1.6, tab: 1.5, "\\": 1.5, caps: 1.8, return: 2.1, shift: 2.4, " ": 6.2, cmd: 1.3 };
+---
+<Section id="terminal" class="cs-theme">
+  <SectionHead eyebrow="Ask me anything" title="Run a command" />
+
+  <div class="tm-stage tm-live mx-auto w-full max-w-[84rem] rounded-[2rem] px-1 pb-12 pt-24 sm:px-2 sm:pt-32" data-term-stage>
+    <i class="tm-orb tm-orb-a" aria-hidden="true"></i><i class="tm-orb tm-orb-b" aria-hidden="true"></i>
+    <i class="tm-spark" style="left:8%;--d:0s" aria-hidden="true"></i><i class="tm-spark" style="left:34%;--d:-2.2s" aria-hidden="true"></i><i class="tm-spark" style="left:62%;--d:-4.1s" aria-hidden="true"></i><i class="tm-spark" style="left:88%;--d:-1.3s" aria-hidden="true"></i>
+
+    <!-- 2D MacBook: aluminium lid, camera, screen = the terminal, base with thumb notch -->
+    <div class="mb mx-auto w-full">
+     <div class="mb-rig">
+      <div class="mb-lid">
+        <!-- a fox perched on the lid: watches, blinks, hops on every command -->
+        <div class="tm-fox" data-term-fox aria-hidden="true">
+          <span class="tm-bubble" data-term-bubble>psst… try “about”</span>
+          <Animal kind="fox" class="h-28 w-24" />
+        </div>
+        <i class="mb-cam" aria-hidden="true"></i>
+        <div class="mb-screen">
+          <div class="tm tm-big tm-glow relative h-full overflow-hidden" data-term-root data-tmdata={termPayload}>
+            <div class="tm-scan" aria-hidden="true"></div>
+            <div class="tm-bar tm-mac">
+              <span class="mac-dots" aria-hidden="true"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span>
+              <span class="tm-title">stephen — -zsh — 80×24</span>
+              <span class="tm-live-chip ml-auto"><b></b>live · <em data-term-up>00:00</em></span>
+            </div>
+            <div class="tm-log" data-term-log data-lenis-prevent role="log" aria-live="polite"></div>
+            <form class="tm-form" data-term-form autocomplete="off">
+              <label for="tm-input" class="sr-only">Terminal command</label>
+              <span class="tm-ps" aria-hidden="true">stephen<i>@</i>portfolio <u>~</u> $</span>
+              <input id="tm-input" data-term-input class="tm-input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="" />
+              <span class="tm-ghost" data-term-ghost aria-hidden="true"></span>
+            </form>
+            <div class="tm-chips pb-1" data-term-chips>
+              {["help", "whoami", "about", "skills", "experience", "projects", "education", "awards", "stats", "contact", "theme", "clear"].map((c) => <button type="button" data-term-cmd={c} class="tm-chip">{c}</button>)}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-hinge" aria-hidden="true"></div>
+      <div class="mb-deckwrap" aria-hidden="true">
+        <div class="mb-deck">
+          <div class="mb-grille"><i></i></div>
+          <div class="mb-kb" data-kb>
+            {kbRows.map((row) => (
+              <div class="mb-row">
+                {row.map((k) => <b class="mb-key" data-key={k.length === 1 ? k : undefined} style={`flex:${wide[k] ?? 1}`}>{k === " " ? "" : k}</b>)}
+              </div>
+            ))}
+          </div>
+          <div class="mb-grille"><i></i></div>
+          <div class="mb-pad"></div>
+        </div>
+      </div>
+     </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-term-root]");
+  if (root) {
+    type Line = string | { text: string; href: string };
+    const data = JSON.parse(root.dataset.tmdata!) as { cmds: Record<string, Line[]>; help: string[][]; names: string[] };
+    const log = root.querySelector<HTMLElement>("[data-term-log]")!;
+    const form = root.querySelector<HTMLFormElement>("[data-term-form]")!;
+    const input = root.querySelector<HTMLInputElement>("[data-term-input]")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const history: string[] = [];
+    let hi = 0;
+
+    const scroll = () => { log.scrollTop = log.scrollHeight; };
+    const add = (cls: string, content: string | HTMLElement) => {
+      const p = document.createElement("div");
+      p.className = `tm-line ${cls}`;
+      if (typeof content === "string") p.textContent = content;
+      else p.append(content);
+      p.style.animationDelay = `${Math.min(log.querySelectorAll(".tm-line.tm-new").length, 24) * 22}ms`;
+      p.classList.add("tm-new");
+      log.append(p);
+      return p;
+    };
+    const paint = (text: string) => {
+      const f = document.createElement("span");
+      const m = text.match(/^(\s*)(•|★)\s(.*)$/);
+      if (m) {
+        f.append(document.createTextNode(m[1]));
+        const b = document.createElement("b"); b.className = "tm-b"; b.textContent = m[2] + " "; f.append(b);
+        const rest = m[3];
+        const kv = rest.match(/^([^:]{2,40}):\s(.*)$/);
+        if (kv) { const k = document.createElement("span"); k.className = "tm-k"; k.textContent = kv[1]; f.append(k, document.createTextNode(": " + kv[2])); }
+        else f.append(document.createTextNode(rest));
+        return f;
+      }
+      const h = text.match(/^(\s{2})(\S+(?: <section>)?)(\s{2,})(.*)$/);
+      if (h) { const k = document.createElement("span"); k.className = "tm-cmdname"; k.textContent = h[2]; const d = document.createElement("span"); d.className = "tm-dim"; d.textContent = h[4]; f.append(document.createTextNode(h[1]), k, document.createTextNode(h[3]), d); return f; }
+      if (/^(Available commands|Scrolling|Switched|\[sudo\])/.test(text)) { f.className = "tm-hl"; f.textContent = text; return f; }
+      f.textContent = text.replace(/ /g, " ");
+      return f;
+    };
+    const out = (lines: Line[]) => {
+      log.querySelectorAll(".tm-new").forEach((n) => n.classList.remove("tm-new"));
+      react();
+      lines.forEach((l) => {
+        if (typeof l === "string") add("tm-out", l ? paint(l) : " ");
+        else { const a = document.createElement("a"); a.href = l.href; a.textContent = l.text; if (!l.href.startsWith("mailto")) { a.target = "_blank"; a.rel = "noreferrer noopener"; } a.className = "tm-link"; add("tm-out", a); }
+      });
+      scroll();
+    };
+    // the fox reacts, the prompt ghost-types suggestions while idle, uptime ticks
+    const fox = document.querySelector<HTMLElement>("[data-term-fox]");
+    const bubble = document.querySelector<HTMLElement>("[data-term-bubble]");
+    const ghost = root.querySelector<HTMLElement>("[data-term-ghost]")!;
+    const up = document.querySelector<HTMLElement>("[data-term-up]");
+    const says = ["psst… try “about”", "ask me about my skills", "type “contact” to say hi", "try “experience”", "there’s a secret: sudo hire-me", "click a chip below!"];
+    let si = 0;
+    const react = () => {
+      if (!fox) return;
+      fox.classList.remove("tm-fox-hop"); void fox.offsetWidth; fox.classList.add("tm-fox-hop");
+      if (bubble) bubble.textContent = ["got it!", "on it…", "nice one", "easy", "woof!"][Math.floor(Math.random() * 5)];
+    };
+    let idleAt = Date.now();
+    input.addEventListener("input", () => { idleAt = Date.now(); ghost.textContent = ""; });
+    const idle = async () => {
+      for (;;) {
+        await new Promise((r) => setTimeout(r, 2600));
+        if (document.activeElement === input && input.value) continue;
+        if (Date.now() - idleAt < 2500 || input.value) continue;
+        const cmd = ["about", "skills", "experience", "contact", "projects"][si % 5];
+        if (bubble) bubble.textContent = `try “${cmd}”`;
+        si++;
+        for (const ch of cmd) { if (input.value) break; ghost.textContent += ch; press(ch); await new Promise((r) => setTimeout(r, 90)); }
+        await new Promise((r) => setTimeout(r, 1100));
+        while (ghost.textContent) { ghost.textContent = ghost.textContent.slice(0, -1); await new Promise((r) => setTimeout(r, 40)); }
+      }
+    };
+    const place = () => { const ps = root.querySelector<HTMLElement>(".tm-ps")!; ghost.style.left = `${ps.offsetLeft + ps.offsetWidth + 10}px`; };
+    place(); new ResizeObserver(place).observe(root);
+    void idle();
+    const t0 = Date.now();
+    setInterval(() => { if (up) { const sec = Math.floor((Date.now() - t0) / 1000); up.textContent = `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`; } }, 1000);
+    const press = (ch: string) => {
+      const k = document.querySelector<HTMLElement>(`[data-kb] [data-key="${CSS.escape(ch.toLowerCase())}"]`) ?? (ch === " " ? document.querySelector<HTMLElement>("[data-kb] .mb-key:not([data-key]):empty") : null);
+      if (!k) return;
+      k.classList.add("mb-key-on");
+      setTimeout(() => k.classList.remove("mb-key-on"), 140);
+    };
+    input.addEventListener("keydown", (e) => { if (e.key.length === 1) press(e.key); });
+    // the input row mirrors typing into the glowing caret position
+    const echo = (cmd: string) => {
+      react();
+      log.querySelectorAll(".tm-new").forEach((n) => n.classList.remove("tm-new"));
+      const row = document.createElement("span");
+      row.innerHTML = '<b class="tm-prompt">$</b> ';
+      row.append(document.createTextNode(cmd));
+      add("tm-cmd", row);
+    };
+
+    const run = (raw: string) => {
+      const cmd = raw.trim();
+      if (!cmd) return;
+      echo(cmd);
+      history.push(cmd);
+      hi = history.length;
+      const [name, ...args] = cmd.toLowerCase().split(/\s+/);
+      if (name === "clear") { log.replaceChildren(); return; }
+      if (name === "help") {
+        out(["Available commands:"]);
+        out(data.help.map(([c, d]) => `  ${c.padEnd(16, " ")} ${d}`));
+        return;
+      }
+      if (name === "theme") {
+        document.querySelector<HTMLElement>("[data-theme-toggle], #theme-toggle, button[aria-label*='theme' i]")?.click();
+        out(["Switched theme."]);
+        return;
+      }
+      if (name === "goto" || name === "cd" || name === "open") {
+        const id = args[0] === "projects" ? "projects" : args[0];
+        const el = id ? document.getElementById(id) : null;
+        if (el) { out([`Scrolling to ${id}…`]); el.scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }
+        else out([`goto: no such section "${args[0] ?? ""}". Try about, skills, experience, projects, contact.`]);
+        return;
+      }
+      if (name === "sudo" && args.join(" ").includes("hire")) {
+        out(["[sudo] permission granted. Opening contact…"]);
+        document.getElementById("contact")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+        return;
+      }
+      if (name === "ls") { out([data.names.join("   ")]); return; }
+      const res = data.cmds[name];
+      if (res) out(res);
+      else out([`command not found: ${name}. Type "help".`]);
+    };
+
+    const typeAndRun = async (cmd: string) => {
+      input.value = "";
+      if (!reduce) for (const ch of cmd) { input.value += ch; press(ch); await new Promise((r) => setTimeout(r, 55)); }
+      else input.value = cmd;
+      await new Promise((r) => setTimeout(r, reduce ? 0 : 220));
+      input.value = "";
+      run(cmd);
+    };
+
+    form.addEventListener("submit", (e) => { e.preventDefault(); const v = input.value; input.value = ""; run(v); });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowUp") { e.preventDefault(); if (hi > 0) { hi -= 1; input.value = history[hi] ?? ""; } }
+      else if (e.key === "ArrowDown") { e.preventDefault(); hi = Math.min(hi + 1, history.length); input.value = history[hi] ?? ""; }
+      else if (e.key === "Tab") { e.preventDefault(); const m = data.names.concat(["help", "clear", "theme", "goto"]).find((n) => n.startsWith(input.value.toLowerCase()) && input.value); if (m) input.value = m; }
+    });
+    root.querySelectorAll<HTMLElement>("[data-term-cmd]").forEach((b) => b.addEventListener("click", () => run(b.dataset.termCmd!)));
+    root.addEventListener("click", (e) => { if (!(e.target as Element).closest("a,button,input")) input.focus({ preventScroll: true }); });
+
+    // Boot: a short scripted session so the visitor sees how it works, then it is theirs.
+    let booted = false;
+    const boot = async () => {
+      if (booted) return;
+      booted = true;
+      await new Promise((r) => setTimeout(r, reduce ? 0 : 300));
+      await typeAndRun("whoami");
+      await new Promise((r) => setTimeout(r, reduce ? 0 : 500));
+      await typeAndRun("help");
+      out(["", 'Try "about", "skills" or click a command below.']);
+    };
+    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); void boot(); } }, { threshold: 0.4 }).observe(root);
+  }
+</script>

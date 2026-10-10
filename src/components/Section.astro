@@ -1,6 +1,6 @@
 ---
-const { id } = Astro.props as { id: string };
+const { id, class: className = "" } = Astro.props as { id: string; class?: string };
 ---
-<section id={id} class="scroll-mt-10 py-28 sm:py-44">
+<section id={id} class:list={["scroll-mt-10 py-20 sm:py-32", className]}>
   <div class="mx-auto w-full max-w-[1440px] px-5 sm:px-8"><slot /></div>
 </section>

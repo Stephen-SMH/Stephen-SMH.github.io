@@ -4,7 +4,7 @@ import { withBase } from "./ui";
 
 const { current, label } = Astro.props as { current: Locale; label: string };
 ---
-<div role="group" aria-label={label} class="flex items-center rounded-full bg-ink/6 p-0.5 font-mono text-[11px]">
+<div role="group" aria-label={label} class="flex items-center rounded-full bg-ink/6 p-0.5 font-mono text-[12px]">
   {locales.map((l) => (
     <a
       href={withBase(`/${l}/`)}

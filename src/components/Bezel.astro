@@ -11,17 +11,18 @@ const {
   lift = false,
   tilt = false,
   float = tilt,
-} = Astro.props as { class?: string; core?: string; lift?: boolean; tilt?: boolean; float?: boolean };
+  style = undefined,
+} = Astro.props as { class?: string; core?: string; lift?: boolean; tilt?: boolean; float?: boolean; style?: string };
 const phase = float ? nextPhase() : undefined;
 ---
 {float ? (
   <div class="card-float" style={`--phase:${phase}`}>
     <div class:list={["bezel", lift && "bezel-lift", className]} data-tilt={tilt ? "" : undefined}>
-      <div class:list={["bezel-core", core]}><slot /></div>
+      <div class:list={["bezel-core", core]} style={style}><slot /></div>
     </div>
   </div>
 ) : (
   <div class:list={["bezel", lift && "bezel-lift", className]} data-tilt={tilt ? "" : undefined}>
-    <div class:list={["bezel-core", core]}><slot /></div>
+    <div class:list={["bezel-core", core]} style={style}><slot /></div>
   </div>
 )}

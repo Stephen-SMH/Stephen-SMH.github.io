@@ -59,11 +59,21 @@ export interface Dict {
     educationTitle: string;
     education: { school: string; degree: string; period: string }[];
     languagesTitle: string;
-    languages: { name: string; level: string }[];
+    languages: { name: string; level: string; bars: number }[];
     awardsTitle: string;
     awards: string[];
     activitiesTitle: string;
     activities: { title: string; body: string }[];
+  };
+  build: {
+    eyebrow: string;
+    title: string;
+    steps: { title: string; desc: string }[];
+  };
+  concepts: {
+    eyebrow: string;
+    title: string;
+    items: { tag: string; title: string; desc: string }[];
   };
   skills: {
     eyebrow: string;
@@ -115,6 +125,18 @@ export interface Dict {
   contact: {
     eyebrow: string;
     title: string;
+    chat: {
+      name: string;
+      online: string;
+      lead: string;
+      hello: string;
+      ask: string;
+      options: { label: string; subject: string; reply: string }[];
+      restart: string;
+      copy: string;
+      copied: string;
+      skip: string;
+    };
     form: {
       name: string;
       namePh: string;

@@ -1,26 +1,408 @@
 ---
 import type { Dict } from "@/content";
-import Bezel from "./Bezel.astro";
-import Reveal from "./Reveal.astro";
+import Animal from "./Animal.astro";
+import Icon from "./Icon.astro";
 import Section from "./Section.astro";
 import SectionHead from "./SectionHead.astro";
-import TagList from "./TagList.astro";
-import { bentoSpan, bentoTone } from "./ui";
 
 const { skills } = Astro.props as { skills: Dict["skills"] };
-const n = skills.groups.length;
+const D = 9; // every scene loops on the same 9s clock
+let css = "";
+let n = 0;
+const reg = (body: string) => {
+  const id = `k${n++}`;
+  css += `@keyframes ${id}{${body}}.${id}{animation-name:${id}}`;
+  return `a ${id}`;
+};
+// reveal / state helpers: s,e are percentages of the loop
+const rise = (s: number, e = s + 3, out = 92) => reg(`0%,${s}%{opacity:0;transform:translateY(8px)}${e}%,${out}%{opacity:1;transform:none}96%,100%{opacity:0;transform:translateY(8px)}`);
+const clip = (s: number, e: number, out = 92) => reg(`0%,${s}%{clip-path:inset(0 100% 0 0)}${e}%,${out}%{clip-path:inset(0)}96%,100%{clip-path:inset(0 100% 0 0)}`);
+const lit = (s: number, out = 92) => reg(`0%,${s}%{opacity:0}${s + 2}%,${out}%{opacity:1}96%,100%{opacity:0}`);
+const flash = (s: number, e: number) => reg(`0%,${s}%{opacity:0}${(s + e) / 2}%{opacity:1}${e}%,100%{opacity:0}`);
+const swap = (s: number, e: number) => reg(`0%,${s}%{opacity:0}${s + 1}%,${e}%{opacity:1}${e + 1}%,100%{opacity:0}`);
+const fill = (s: number, e: number, to = "100%", out = 92) => reg(`0%,${s}%{width:0}${e}%,${out}%{width:${to}}96%,100%{width:0}`);
+const fall = (s: number, e: number) => reg(`0%,${s}%{opacity:1;transform:none}${e}%,94%{opacity:0;transform:translateX(14px)}98%,100%{opacity:1;transform:none}`);
+const move = (s: number, e: number) => reg(`0%,${s}%{offset-distance:0%;opacity:0}${s + 1}%{opacity:1}${e - 1}%{opacity:1}${e}%,100%{offset-distance:100%;opacity:0}`);
+const grow = (s: number, e: number) => reg(`0%,${s}%{opacity:0;transform:scale(.4)}${e}%,92%{opacity:1;transform:none}96%,100%{opacity:0;transform:scale(.4)}`);
+
+const P = (l: number, t: number, w: number, h: number) => `left:${l}px;top:${t}px;width:${w}px;height:${h}px`;
+const G = "absolute rounded-xl border border-white/[0.15] bg-white/[0.08]";
+const icons = ["sparkles", "layout", "server", "database", "activity", "cloud", "flask", "code"];
+const t = "font-mono text-[11px] text-white/80";
+const dim = "font-mono text-[10px] text-white/45";
+const sheen = "absolute inset-0 rounded-[inherit]";
+
+/* ---------- scene data ---------- */
+// 0 AI / agentic: RAG copilot
+const ragNodes = ["Query", "Embed", "Vectors", "LLM"];
+const ragAt = [8, 20, 34, 58];
+const docs = [["handbook.pdf", "0.91", "86%"], ["churn-q3.csv", "0.84", "74%"], ["notes.md", "0.71", "58%"]];
+// 3 databases
+const stmts = ["INSERT INTO users VALUES (4, 'Mia', 'new');", "UPDATE users SET status = 'active' WHERE id = 2;", "DELETE FROM users WHERE id = 3;", "SELECT * FROM users ORDER BY id;"];
+const stmtAt: [number, number][] = [[3, 22], [26, 45], [49, 68], [72, 90]];
+// 6 tests
+const tests = ["login.spec", "feed.spec", "schedule.spec", "rbac.spec", "upload.spec", "logout.spec"];
+const testAt = [8, 19, 30, 41, 55, 66];
+// 5 devops
+const stagesDev = ["Commit", "Build", "Test", "Deploy"];
 ---
-<Section id="skills">
+
+<Section id="skills" class="cs-theme">
   <SectionHead title={skills.title} />
-  <div class="grid gap-4 md:grid-cols-12">
-    {skills.groups.map((g, i) => (
-      <Reveal variant="card" class={bentoSpan(i, n)}>
-        <Bezel lift tilt class="h-full" core={`flex h-full flex-col p-7 sm:p-8 ${bentoTone(i)}`}>
-          <h3 class="font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">{g.title}</h3>
-          <p class="mt-3 max-w-[52ch] text-[14.5px] leading-relaxed text-ink-soft">{g.desc}</p>
-          <TagList tags={g.tags} class="mt-auto pt-7" />
-        </Bezel>
-      </Reveal>
-    ))}
-  </div>
+
+  <div class="sk-wrap rounded-[2rem] p-4 sm:p-8"><div class="grid items-center gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12" data-skills>
+    <!-- Category list: active item opens and shows a progress line -->
+    <ul class="order-2 space-y-3 lg:order-1" role="tablist" aria-label={skills.title}>
+      {skills.groups.map((g, i) => (
+        <li class="sk-item overflow-hidden rounded-2xl border border-white/[0.12] bg-white/[0.05] px-5 backdrop-blur-[2px] transition-colors duration-500 has-[[aria-selected=true]]:border-pink-300/40 has-[[aria-selected=true]]:bg-white/[0.11]">
+          <button
+            type="button"
+            role="tab"
+            id={`sk-tab-${i}`}
+            aria-selected={i === 0 ? "true" : "false"}
+            aria-controls={`sk-panel-${i}`}
+            data-skill-tab={i}
+            class="group relative block w-full py-5 text-left"
+          >
+            <span class="flex items-center justify-between gap-4">
+              <span class="font-display text-lg font-medium tracking-tight text-white/60 transition-colors group-aria-selected:text-white sm:text-xl">{g.title}</span>
+              <span class="font-mono text-[12px] text-white/40">{String(g.tags.length).padStart(2, "0")}</span>
+            </span>
+            <span class="sk-body grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 group-aria-selected:grid-rows-[1fr]">
+              <span class="overflow-hidden">
+                <span class="mt-2 block max-w-[44ch] text-[14.5px] leading-relaxed text-white/70">{g.desc}</span>
+              </span>
+            </span>
+            <span aria-hidden="true" class="sk-track absolute bottom-0 left-0 h-[2px] w-full overflow-hidden opacity-0 group-aria-selected:opacity-100"><i class="sk-fill block h-full w-0"></i></span>
+          </button>
+        </li>
+      ))}
+    </ul>
+
+
+    <!-- Animated scene stage: one self-looping scene per category -->
+    <div class="order-1 mx-auto w-full max-w-[44rem] lg:order-2">
+      <div class="sk-scenebox relative w-full overflow-hidden rounded-2xl border border-white/[0.14] bg-white/[0.05] backdrop-blur-[2px]" data-scenebox aria-live="polite">
+        <div class="origin-top-left" style="width:640px;height:360px" data-sceneinner>
+          <!-- shared window bar -->
+          <div class="absolute inset-x-0 top-0 flex h-[34px] items-center gap-2 border-b border-white/10 px-3">
+            <i class="h-2.5 w-2.5 rounded-full bg-white/25"></i><i class="h-2.5 w-2.5 rounded-full bg-white/25"></i><i class="h-2.5 w-2.5 rounded-full bg-white/25"></i>
+            <span class="ml-2 rounded-full border border-white/15 bg-white/[0.08] px-3 py-0.5 font-mono text-[11px] text-white/75" data-skill-title>{skills.groups[0].title}</span>
+          </div>
+
+          <!-- 0 · AI / agentic: RAG copilot -->
+          <div data-scene="0" class="absolute inset-0">
+            <div class={G} style={P(16, 46, 292, 298)}>
+              <div class="absolute right-3 top-3 max-w-[210px] rounded-2xl rounded-br-sm bg-gradient-to-r from-pink-500/70 to-indigo-500/70 px-3 py-2 text-[12px] text-white"><span class={clip(2, 10)} style="display:block">Why did churn rise in Q3?</span></div>
+              <div class={`absolute left-3 top-[62px] rounded-full border border-white/15 bg-white/10 px-2.5 py-1 ${t} ${rise(12)}`}>⚙ search_docs("churn Q3")</div>
+              <div class={`absolute left-3 top-[100px] ${dim} ${swap(14, 34)}`}><span class="sc-spin mr-1 inline-block">✻</span> Retrieving context…</div>
+              <div class="absolute left-3 top-[126px] w-[262px] space-y-2 rounded-2xl rounded-bl-sm border border-white/12 bg-white/[0.08] p-3 text-[12px] leading-snug text-white/90">
+                <p class={clip(52, 62)}>Churn rose 2.1% in Q3,</p>
+                <p class={clip(62, 72)}>mostly from annual plans</p>
+                <p class={clip(72, 82)}>renewing at a higher tier.</p>
+                <p class={`flex gap-1.5 ${rise(82)}`}><span class="rounded bg-pink-400/25 px-1.5 text-[10px] text-pink-100">[1]</span><span class="rounded bg-indigo-400/25 px-1.5 text-[10px] text-indigo-100">[2]</span></p>
+              </div>
+            </div>
+            {ragNodes.map((nm, i) => (
+              <>
+                <div class="absolute rounded-lg border border-white/15 bg-white/[0.08] px-2 py-1.5 text-center font-mono text-[10.5px] text-white/70" style={P(326 + i * 76, 52, 66, 30)}>
+                  {nm}
+                  <span class={`${sheen} grid place-items-center border border-pink-300/70 bg-pink-500/80 text-white ${lit(ragAt[i])}`}>{nm}</span>
+                </div>
+                {i < 3 && <i class="absolute h-px bg-white/25" style={P(392 + i * 76, 67, 10, 1)}></i>}
+              </>
+            ))}
+            <i class={`absolute h-2.5 w-2.5 rounded-full bg-pink-300 shadow-[0_0_14px_4px_rgba(244,114,182,.7)] ${move(8, 58)}`} style="offset-path:path('M 340 118 L 604 118');top:0;left:0;offset-rotate:0deg;"></i>
+            {docs.map(([nm, sc, w], i) => (
+              <div class={`absolute rounded-lg border border-white/15 bg-white/[0.08] px-3 py-2 ${rise(36 + i * 4)}`} style={P(326, 140 + i * 56, 298, 46)}>
+                <div class="flex items-center justify-between"><span class={t}>{nm}</span><span class={dim}>{sc}</span></div>
+                <i class="mt-2 block h-1.5 rounded-full bg-white/10"><i class={`block h-full rounded-full bg-gradient-to-r from-pink-400 to-indigo-400 ${fill(38 + i * 4, 50, w)}`}></i></i>
+                {i === 0 && <span class={`${sheen} border border-pink-300/70 ${lit(52)}`}></span>}
+              </div>
+            ))}
+            <div class={`absolute rounded-full border border-pink-300/50 bg-pink-500/20 px-3 py-1 font-mono text-[11px] text-pink-100 ${lit(60)}`} style="left:326px;top:314px">✦ grounded in 2 sources</div>
+          </div>
+
+          <!-- 1 · Frontend & Mobile: responsive UI -->
+          <div data-scene="1" class="absolute inset-0" hidden>
+            <div class={G} style={P(16, 46, 340, 298)}>
+              <div class={`absolute left-3 top-3 h-[274px] overflow-hidden ${reg("0%,12%{width:314px}38%,62%{width:178px}88%,100%{width:314px}")}`} style="width:314px">
+                <div class="grid gap-2" style="grid-template-columns:repeat(auto-fit,minmax(78px,1fr))">
+                  {[0, 1, 2, 3, 4, 5].map((k) => (
+                    <div class={`rounded-lg border border-white/15 bg-white/[0.08] p-2 ${rise(3 + k * 2)}`}>
+                      <i class={`block h-12 rounded-md bg-gradient-to-br ${["from-pink-400/60 to-indigo-400/60", "from-indigo-400/60 to-sky-400/60", "from-fuchsia-400/60 to-pink-400/60"][k % 3]}`}></i>
+                      <i class="mt-2 block h-1.5 w-4/5 rounded-full bg-white/25"></i><i class="mt-1.5 block h-1.5 w-1/2 rounded-full bg-white/15"></i>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div class="absolute rounded-[1.4rem] border border-white/20 bg-white/[0.08] p-2" style={P(372, 46, 122, 298)}>
+              <span class="mx-auto mb-2 block h-1.5 w-10 rounded-full bg-white/30"></span>
+              <div class="space-y-2">
+                {[0, 1, 2].map((k) => (
+                  <div class={`rounded-lg border border-white/15 bg-white/[0.08] p-1.5 ${rise(6 + k * 4)}`}><i class="block h-9 rounded-md bg-gradient-to-br from-pink-400/60 to-indigo-400/60"></i><i class="mt-1.5 block h-1.5 w-4/5 rounded-full bg-white/25"></i></div>
+                ))}
+              </div>
+              <div class="absolute inset-x-3 bottom-3 flex justify-around">{[0, 1, 2, 3].map(() => <i class="h-1.5 w-1.5 rounded-full bg-white/30"></i>)}</div>
+            </div>
+            <div class={G} style={P(510, 46, 114, 298)}>
+              <div class="space-y-1.5 p-2.5 font-mono text-[10.5px] leading-snug">
+                <p class={`text-pink-300 ${clip(6, 16)}`}>&lt;Card</p>
+                <p class={`pl-3 text-sky-300 ${clip(16, 26)}`}>variant="glass"</p>
+                <p class={`pl-3 text-emerald-300 ${clip(26, 36)}`}>cols=&#123;auto&#125;</p>
+                <p class={`text-pink-300 ${clip(36, 44)}`}>/&gt;</p>
+              </div>
+              <div class="absolute inset-x-2.5 bottom-3 flex gap-1.5">{["bg-pink-400", "bg-indigo-400", "bg-sky-300", "bg-emerald-300"].map((c, k) => <i class={`h-5 flex-1 rounded-md ${c} ${grow(50 + k * 4, 58 + k * 4)}`}></i>)}</div>
+            </div>
+          </div>
+
+          <!-- 2 · Backend: request flow -->
+          <div data-scene="2" class="absolute inset-0" hidden>
+            {[["Client", 28], ["API", 186], ["Service", 344], ["Database", 502]].map(([nm, x], i) => (
+              <div class="absolute rounded-xl border border-white/15 bg-white/[0.08] text-center font-mono text-[12px] leading-[56px] text-white/75" style={P(Number(x), 62, 110, 56)}>
+                {nm}
+                <span class={`${sheen} border border-pink-300/70 bg-pink-500/70 text-white ${flash(8 + i * 10, 18 + i * 10)}`}>{nm}</span>
+                <span class={`${sheen} border border-emerald-300/70 bg-emerald-500/60 text-white ${flash(56 + (3 - i) * 8, 66 + (3 - i) * 8)}`}>{nm}</span>
+              </div>
+            ))}
+            <i class="absolute h-px bg-white/25" style={P(138, 90, 48, 1)}></i><i class="absolute h-px bg-white/25" style={P(296, 90, 48, 1)}></i><i class="absolute h-px bg-white/25" style={P(454, 90, 48, 1)}></i>
+            <span class={`absolute rounded-full border border-emerald-300/50 bg-emerald-400/15 px-2.5 py-0.5 font-mono text-[10px] text-emerald-200 ${rise(18)}`} style="left:200px;top:40px">🔒 RBAC ✓</span>
+            <i class={`absolute rounded-md bg-pink-300 px-1 text-[9px] font-bold leading-4 text-pink-950 shadow-[0_0_14px_4px_rgba(244,114,182,.6)] ${move(8, 48)}`} style="top:0;left:0;offset-path:path('M 90 136 L 556 136');offset-rotate:0deg;width:18px;height:16px;text-align:center">{`{ }`}</i>
+            <i class={`absolute rounded-md bg-emerald-300 px-1 text-[9px] font-bold leading-4 text-emerald-950 shadow-[0_0_14px_4px_rgba(110,231,183,.6)] ${move(58, 92)}`} style="top:0;left:0;offset-path:path('M 556 154 L 90 154');offset-rotate:0deg;width:22px;height:16px;text-align:center">200</i>
+            <div class={`${G} p-3 font-mono text-[11px] leading-[1.9]`} style={P(16, 170, 330, 174)}>
+              <p class={`text-white/85 ${clip(20, 30)}`}><span class="text-emerald-300">POST</span> /posts <span class="text-white/45">201 · 32ms</span></p>
+              <p class={`text-white/85 ${clip(32, 42)}`}><span class="text-sky-300">GET</span> /feed <span class="text-white/45">200 · 11ms</span></p>
+              <p class={`text-white/85 ${clip(44, 54)}`}><span class="text-amber-300">PATCH</span> /posts/7 <span class="text-white/45">200 · 18ms</span></p>
+              <p class={`text-white/85 ${clip(56, 66)}`}><span class="text-rose-300">DELETE</span> /posts/9 <span class="text-rose-300">403 · RBAC</span></p>
+              <p class={`text-white/85 ${clip(68, 78)}`}><span class="text-sky-300">GET</span> /health <span class="text-white/45">200 · 2ms</span></p>
+            </div>
+            <div class={`${G} p-3 font-mono text-[11px] leading-[1.8] text-white/80`} style={P(362, 170, 262, 174)}>
+              <p class={clip(14, 22)}>&#123;</p>
+              <p class={`pl-3 ${clip(22, 32)}`}><span class="text-pink-300">"status"</span>: <span class="text-emerald-300">"queued"</span>,</p>
+              <p class={`pl-3 ${clip(32, 42)}`}><span class="text-pink-300">"id"</span>: <span class="text-amber-300">128</span>,</p>
+              <p class={`pl-3 ${clip(42, 52)}`}><span class="text-pink-300">"owner"</span>: <span class="text-emerald-300">"mia"</span></p>
+              <p class={clip(52, 58)}>&#125;</p>
+            </div>
+          </div>
+
+          <!-- 3 · Databases & messaging -->
+          <div data-scene="3" class="absolute inset-0" hidden>
+            <div class={G} style={P(16, 46, 384, 298)}>
+              <svg class="absolute left-3 top-3 sc-ring-d h-10 w-10 text-pink-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="6" rx="8" ry="3" /><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" /></svg>
+              <div class="absolute left-16 right-3 top-4 h-8 font-mono text-[11px] leading-8 text-white/85">
+                {stmts.map((q, i) => <span class={`absolute inset-0 whitespace-nowrap overflow-hidden ${swap(stmtAt[i][0], stmtAt[i][1])}`}><span class={`block ${clip(stmtAt[i][0] + 1, stmtAt[i][0] + 9, stmtAt[i][1])}`}><b class="text-pink-300">{q.split(" ")[0]}</b> {q.split(" ").slice(1).join(" ")}</span></span>)}
+              </div>
+              <div class="absolute inset-x-3 top-[64px] font-mono text-[11px]">
+                <div class="grid grid-cols-[40px_1fr_1fr] gap-2 border-b border-white/15 pb-1.5 text-white/45"><span>id</span><span>name</span><span>status</span></div>
+                {[["1", "Ana", "active"], ["2", "Ben", "pending"], ["3", "Chai", "active"]].map(([id, nm, st], i) => (
+                  <div class={`relative grid grid-cols-[40px_1fr_1fr] gap-2 py-2 text-white/85 ${i === 2 ? fall(54, 62) : ""}`}>
+                    <span>{id}</span><span>{nm}</span>
+                    {i === 1 ? (<span class="relative"><span class={`${swap(0, 30)} absolute`} style="opacity:1">pending</span><span class={`text-amber-300 ${reg("0%,32%{opacity:0}36%,92%{opacity:1}96%,100%{opacity:0}")}`}>active</span></span>) : <span>{st}</span>}
+                    {i === 1 && <span class={`${sheen} bg-amber-400/25 ${flash(30, 42)}`}></span>}
+                    {i === 2 && <span class={`${sheen} bg-rose-400/30 ${flash(50, 62)}`}></span>}
+                  </div>
+                ))}
+                <div class={`relative grid grid-cols-[40px_1fr_1fr] gap-2 py-2 text-white/85 ${rise(8)}`}><span>4</span><span>Mia</span><span>new</span><span class={`${sheen} bg-emerald-400/25 ${flash(6, 18)}`}></span></div>
+                <span class={`${sheen} bg-sky-400/20 ${flash(74, 86)}`} style="top:20px;bottom:-60px"></span>
+              </div>
+              <div class={`absolute inset-x-3 bottom-3 rounded-lg border border-white/12 bg-white/[0.06] px-3 py-2 font-mono text-[10.5px] text-white/70 ${rise(20)}`}>
+                <b class="text-pink-300">CALL</b> sync_orders() <span class={`text-emerald-300 ${lit(80)}`}>✓ 128 rows</span>
+              </div>
+            </div>
+            <div class={G} style={P(416, 46, 208, 298)}>
+              <p class={`absolute left-3 top-2.5 ${dim}`}>RabbitMQ · orders</p>
+              <div class="absolute left-1/2 top-9 w-[84px] -translate-x-1/2 rounded-lg border border-white/15 bg-white/10 py-1.5 text-center font-mono text-[10px] text-white/75">producer</div>
+              <div class="absolute left-4 right-4 top-[122px] flex h-11 items-center gap-2 rounded-lg border border-white/15 bg-white/[0.06] px-2">{[0, 1, 2, 3].map((k) => <i class={`h-6 flex-1 rounded bg-gradient-to-br from-pink-400/70 to-indigo-400/70 ${grow(14 + k * 8, 22 + k * 8)}`}></i>)}</div>
+              <div class="absolute left-1/2 top-[252px] w-[84px] -translate-x-1/2 rounded-lg border border-white/15 bg-white/10 py-1.5 text-center font-mono text-[10px] text-white/75">consumer<span class={`${sheen} border border-emerald-300/70 bg-emerald-500/60 leading-[26px] text-white ${flash(60, 80)}`}>✓ ack</span></div>
+              {[10, 30, 50].map((s) => <i class={`absolute h-3 w-3 rounded-sm bg-pink-300 shadow-[0_0_10px_3px_rgba(244,114,182,.6)] ${move(s, s + 14)}`} style="top:0;left:0;offset-path:path('M 104 74 L 104 120');offset-rotate:0deg"></i>)}
+              {[18, 38, 58].map((s) => <i class={`absolute h-3 w-3 rounded-sm bg-emerald-300 ${move(s + 8, s + 22)}`} style="top:0;left:0;offset-path:path('M 104 168 L 104 250');offset-rotate:0deg"></i>)}
+            </div>
+          </div>
+
+          <!-- 4 · Real-time & IoT -->
+          <div data-scene="4" class="absolute inset-0" hidden>
+            {[78, 150, 222].map((y, i) => (
+              <>
+                <div class="absolute grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-white/10 font-mono text-[10px] text-white/80" style={`left:34px;top:${y - 20}px`}>S{i + 1}<i class="sc-ring absolute inset-0 rounded-full border border-pink-300/70" style={`animation-delay:${i * 0.5}s`}></i></div>
+                <i class={`absolute h-2.5 w-2.5 rounded-full bg-pink-300 shadow-[0_0_12px_3px_rgba(244,114,182,.7)] ${move(6 + i * 7, 22 + i * 7)}`} style={`top:0;left:0;offset-path:path('M 78 ${y} L 190 150');offset-rotate:0deg`}></i>
+              </>
+            ))}
+            <svg class="absolute left-[170px] top-[120px] h-14 w-14 text-indigo-300" viewBox="0 0 24 24" fill="rgba(129,140,248,.18)" stroke="currentColor" stroke-width="1.4"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z" /><text x="12" y="14" text-anchor="middle" font-size="5.5" fill="currentColor" stroke="none">MQ</text></svg>
+            <i class="absolute h-px w-[96px] bg-white/25" style="left:228px;top:150px"></i>
+            <i class={`absolute h-2.5 w-2.5 rounded-full bg-indigo-300 shadow-[0_0_12px_3px_rgba(129,140,248,.7)] ${move(30, 46)}`} style="top:0;left:0;offset-path:path('M 228 150 L 326 150');offset-rotate:0deg"></i>
+            <div class={G} style={P(332, 46, 292, 198)}>
+              <p class={`absolute left-3 top-2 ${dim}`}>live · websocket</p>
+              <span class="absolute right-3 top-2 flex items-center gap-1 font-mono text-[10px] text-emerald-300"><i class="sc-blink h-1.5 w-1.5 rounded-full bg-emerald-300"></i>LIVE</span>
+              <svg viewBox="0 0 270 110" class="absolute left-3 right-3 top-9 h-[84px] w-[266px]" preserveAspectRatio="none" fill="none"><path d="M0 80 C20 60 30 90 55 55 S95 70 115 40 S160 75 185 35 S235 55 270 20" stroke="#f472b6" stroke-width="2.4" stroke-linecap="round" pathLength="1" class={`sc-draw ${reg("0%,26%{stroke-dashoffset:1}58%,92%{stroke-dashoffset:0}96%,100%{stroke-dashoffset:1}")}`} style="stroke-dasharray:1" /><path d="M0 80 C20 60 30 90 55 55 S95 70 115 40 S160 75 185 35 S235 55 270 20 V110 H0z" fill="rgba(244,114,182,.12)" class={lit(40)} /></svg>
+              <div class="absolute inset-x-3 bottom-3 grid grid-cols-3 gap-2">{[["Speed", "0.8 m/s"], ["Items", "1,204"], ["Temp", "41 °C"]].map(([k, v], i) => <div class={`rounded-lg border border-white/12 bg-white/[0.06] px-2 py-1.5 ${rise(40 + i * 5)}`}><p class={dim}>{k}</p><p class="font-mono text-[12px] text-white">{v}</p></div>)}</div>
+            </div>
+            <div class="absolute overflow-hidden" style="left:16px;top:274px;width:608px;height:70px">
+              <div class="sc-belt flex gap-9 pt-3" style="width:200%">{Array.from({ length: 16 }).map((_, k) => <i class={`h-9 w-9 shrink-0 rounded-lg ${k % 3 === 0 ? "bg-pink-400/80" : k % 3 === 1 ? "bg-indigo-400/80" : "bg-emerald-400/70"}`}></i>)}</div>
+              <i class="absolute inset-x-0 bottom-3 h-2 rounded-full bg-white/20"></i>
+              <span class={`absolute right-24 top-0 rounded-full border border-emerald-300/50 bg-emerald-400/20 px-2 font-mono text-[10px] text-emerald-200 ${flash(30, 60)}`}>QR ✓</span>
+            </div>
+          </div>
+
+          <!-- 5 · Infra & DevOps -->
+          <div data-scene="5" class="absolute inset-0" hidden>
+            <div class="absolute flex items-center" style="left:20px;top:50px;width:600px">
+              {stagesDev.map((st, i) => (
+                <>
+                  <div class="relative rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 font-mono text-[11px] text-white/55">{st}<span class={`${sheen} grid place-items-center border border-emerald-300/70 bg-emerald-400/90 text-emerald-950 ${lit(8 + i * 14)}`}>✓ {st}</span></div>
+                  {i < 3 && <div class="relative mx-1.5 h-[3px] flex-1 overflow-hidden rounded-full bg-white/15"><i class={`absolute inset-y-0 left-0 bg-emerald-300 ${fill(4 + i * 14, 14 + i * 14)}`}></i></div>}
+                </>
+              ))}
+            </div>
+            <div class={G} style={P(16, 98, 400, 160)}>
+              <p class={`absolute left-3 top-2 ${dim}`}>kubernetes · prod · replicas</p>
+              <div class="absolute inset-x-3 top-8 grid grid-cols-5 gap-2">
+                {Array.from({ length: 10 }).map((_, k) => (
+                  <div class={`relative grid h-[52px] place-items-center rounded-lg border border-sky-300/40 bg-sky-400/15 ${k < 2 ? "" : grow(48 + (k - 2) * 4, 54 + (k - 2) * 4)}`}>
+                    <svg viewBox="0 0 24 24" class="h-5 w-5 text-sky-200" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13h18M5 13V9h4v4M10 13V7h4v6M15 13V9h4v4M4 13c0 4 4 6 8 6s8-2 8-6" /></svg>
+                    <i class="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-300"></i>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class={G} style={P(432, 98, 192, 160)}>
+              <p class={`absolute left-3 top-2 ${dim}`}>canary traffic</p>
+              <div class="absolute inset-x-3 top-10 space-y-3 font-mono text-[10.5px] text-white/75">
+                <div><div class="flex justify-between"><span>v1</span><span>stable</span></div><i class="mt-1 block h-2 rounded-full bg-white/10"><i class={`block h-full rounded-full bg-sky-400 ${reg("0%,40%{width:90%}70%,92%{width:10%}96%,100%{width:90%}")}`}></i></i></div>
+                <div><div class="flex justify-between"><span>v2</span><span>canary</span></div><i class="mt-1 block h-2 rounded-full bg-white/10"><i class={`block h-full rounded-full bg-emerald-400 ${reg("0%,40%{width:10%}70%,92%{width:90%}96%,100%{width:10%}")}`}></i></i></div>
+              </div>
+              <p class={`absolute inset-x-3 bottom-3 rounded-lg border border-emerald-300/40 bg-emerald-400/15 px-2 py-1 text-center font-mono text-[10.5px] text-emerald-200 ${lit(74)}`}>99.98% · promoted</p>
+            </div>
+            <div class={`${G} px-3 py-2 font-mono text-[11px]`} style={P(16, 272, 608, 72)}>
+              <p class="text-white/85"><span class="text-pink-300">$</span> <span class={`inline-block align-bottom ${clip(40, 62)}`} style="white-space:nowrap">kubectl scale deploy/api --replicas=10</span></p>
+              <svg viewBox="0 0 560 24" class="mt-1.5 h-6 w-full" fill="none"><path d="M0 18 C40 14 70 20 110 12 S180 18 230 9 S320 16 380 8 S470 14 560 4" stroke="#818cf8" stroke-width="2" stroke-linecap="round" pathLength="1" style="stroke-dasharray:1" class={`sc-draw ${reg("0%,20%{stroke-dashoffset:1}60%,92%{stroke-dashoffset:0}96%,100%{stroke-dashoffset:1}")}`} /></svg>
+            </div>
+          </div>
+
+          <!-- 6 · Testing & QA -->
+          <div data-scene="6" class="absolute inset-0" hidden>
+            <div class={G} style={P(16, 46, 330, 298)}>
+              <div class="flex items-center justify-between px-3 pt-2.5"><span class={t}>Playwright</span><span class={dim}>6 specs</span></div>
+              <i class="absolute inset-x-3 top-9 block h-1.5 rounded-full bg-white/10"><i class={`block h-full rounded-full bg-gradient-to-r from-pink-400 to-emerald-300 ${fill(8, 76)}`}></i></i>
+              <div class="absolute inset-x-3 top-[56px] space-y-1">
+                {tests.map((nm, i) => (
+                  <div class="relative flex items-center gap-2.5 rounded-lg border border-white/12 bg-white/[0.06] px-2.5 py-1.5 font-mono text-[11px] text-white/80">
+                    <span class="relative grid h-4 w-4 place-items-center">
+                      <span class={`sc-spin absolute text-white/70 ${swap(testAt[i] - 4, testAt[i])}`}>◜</span>
+                      {i === 3 ? (<>
+                        <span class={`absolute text-rose-300 ${reg(`0%,${testAt[i]}%{opacity:0}${testAt[i] + 1}%,${testAt[i] + 8}%{opacity:1}${testAt[i] + 9}%,100%{opacity:0}`)}`}>✗</span>
+                        <span class={`absolute text-emerald-300 ${lit(testAt[i] + 12)}`}>✓</span>
+                      </>) : <span class={`absolute text-emerald-300 ${lit(testAt[i])}`}>✓</span>}
+                    </span>
+                    {nm}
+                    {i === 3 && <span class={`ml-auto rounded bg-amber-400/20 px-1.5 text-[9.5px] text-amber-200 ${flash(testAt[i] + 2, testAt[i] + 12)}`}>retry</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class={G} style={P(362, 46, 262, 298)}>
+              <div class="mx-auto mt-4 w-[210px] rounded-xl border border-white/15 bg-white/[0.06] p-3">
+                <i class="block h-2 w-16 rounded-full bg-white/30"></i>
+                <i class="mt-3 block h-6 rounded-md border border-white/15 bg-white/[0.06]"></i>
+                <i class="mt-2 block h-6 rounded-md border border-white/15 bg-white/[0.06]"></i>
+                <div class="relative mt-3 rounded-md bg-gradient-to-r from-pink-500/80 to-indigo-500/80 py-1.5 text-center text-[11px] text-white">Sign in<span class={`${sheen} bg-white/40 ${flash(46, 52)}`}></span></div>
+              </div>
+              <svg viewBox="0 0 16 16" class={`absolute h-4 w-4 text-white drop-shadow ${move(12, 46)}`} style="top:0;left:0;offset-path:path('M 40 250 L 150 170 L 150 152');offset-rotate:0deg" fill="white" stroke="#1a1a1c" stroke-width="1"><path d="M2 1l11 5-5 1.5L6.5 13z" /></svg>
+              <div class={`absolute inset-x-5 top-[196px] rounded-lg border border-emerald-300/50 bg-emerald-400/15 px-3 py-1.5 text-center font-mono text-[11px] text-emerald-200 ${rise(54)}`}>Signed in ✓</div>
+              <div class={`absolute inset-x-5 bottom-4 rounded-lg border border-white/15 bg-white/[0.08] py-2 text-center font-mono text-[12px] text-white ${lit(80)}`}><span class="text-emerald-300">48 passed</span> · 0 failed</div>
+            </div>
+          </div>
+
+          <!-- 7 · AI-assisted delivery -->
+          <div data-scene="7" class="absolute inset-0" hidden>
+            <div class={`${G} p-3 font-mono text-[11px] leading-[1.7] text-white/85`} style={P(16, 46, 330, 298)}>
+              <div class="rounded-md border border-white/20 px-2 py-1.5"><span class="text-white/45">&gt;</span> <span class={`inline-block align-bottom ${clip(2, 14)}`} style="white-space:nowrap">add scheduling with an AI copilot</span></div>
+              <p class={`mt-2 ${swap(14, 26)}`} style="color:#d97757"><span class="sc-spin inline-block">✻</span> Thinking…</p>
+              <p class={`mt-2 ${rise(26)}`}><span class="text-emerald-300">⏺</span> Edit(<span class="text-sky-300">app/posts.py</span>)</p>
+              <div class="mt-1.5 space-y-0.5">
+                <p class={`rounded-sm bg-rose-400/15 px-1.5 text-rose-200 ${rise(30)}`}>- return queue.add(post)</p>
+                <p class={`rounded-sm bg-emerald-400/15 px-1.5 text-emerald-200 ${rise(36)}`}>+ job = queue.enqueue(post)</p>
+                <p class={`rounded-sm bg-emerald-400/15 px-1.5 text-emerald-200 ${rise(42)}`}>+ await ai.copilot(post)</p>
+                <p class={`rounded-sm bg-emerald-400/15 px-1.5 text-emerald-200 ${rise(48)}`}>+ return &#123;"status": "queued"&#125;</p>
+              </div>
+              <p class={`mt-3 ${rise(54)}`}><span class="text-emerald-300">⏺</span> Bash(<span class="text-sky-300">pytest -q</span>) <span class="text-emerald-300">48 passed</span></p>
+            </div>
+            <div class={G} style={P(362, 46, 262, 298)}>
+              <div class="px-4 pt-3"><p class="font-mono text-[10px] text-white/45">pull request #128</p><p class="mt-1 text-[14px] font-medium text-white">feat: schedule posts</p></div>
+              <div class="absolute inset-x-4 top-[78px] space-y-2 font-mono text-[11px] text-white/80">
+                {[["CI passing", 56], ["48 tests green", 62]].map(([l, s]) => <div class={`flex items-center gap-2 rounded-lg border border-white/12 bg-white/[0.06] px-2.5 py-2 ${rise(Number(s))}`}><span class="text-emerald-300">✓</span>{l}</div>)}
+                <div class={`flex items-center gap-2 rounded-lg border border-pink-300/40 bg-pink-400/10 px-2.5 py-2 ${rise(68)}`}><Animal kind="fox" class="h-6 w-5" /> Reviewed by a human <span class={`ml-auto text-emerald-300 ${lit(74)}`}>✓</span></div>
+              </div>
+              <div class="absolute inset-x-4 bottom-4 rounded-lg bg-white/10 py-2 text-center font-mono text-[12px] text-white/50">Merge<span class={`${sheen} bg-gradient-to-r from-emerald-500/90 to-teal-400/90 py-2 text-white ${lit(82)}`}>Merged ✓</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- the skills of the active category -->
+      <div class="mt-4 min-h-[5.5rem]">
+        {skills.groups.map((g, i) => (
+          <div role="tabpanel" id={`sk-panel-${i}`} aria-labelledby={`sk-tab-${i}`} hidden={i !== 0} data-skill-panel={i} class="flex flex-wrap gap-[0.4rem]">
+            {g.tags.map((tg, k) => (
+              <span class="sk-chip rounded-full border border-white/[0.18] bg-white/[0.1] px-2.5 py-1 font-mono text-[12px] text-white/90" style={`--i:${k}`}>{tg}</span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div></div>
 </Section>
+
+<style is:inline set:html={css + `.a{animation-duration:${D}s;animation-timing-function:linear;animation-iteration-count:infinite}`}></style>
+<script>
+  const root = document.querySelector<HTMLElement>("[data-skills]");
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-skill-tab]")];
+    const panels = [...root.querySelectorAll<HTMLElement>("[data-skill-panel]")];
+    const scenes = [...root.querySelectorAll<HTMLElement>("[data-scene]")];
+    const title = root.querySelector<HTMLElement>("[data-skill-title]")!;
+    const box = root.querySelector<HTMLElement>("[data-scenebox]")!;
+    const inner = root.querySelector<HTMLElement>("[data-sceneinner]")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let cur = 0;
+    let timer = 0;
+    let hovering = false;
+
+    const fit = () => {
+      const s = box.clientWidth / 640;
+      inner.style.transform = `scale(${s})`;
+      box.style.height = `${360 * s}px`;
+    };
+    new ResizeObserver(fit).observe(box);
+    fit();
+
+    const show = (i: number) => {
+      cur = i;
+      tabs.forEach((t, k) => {
+        t.setAttribute("aria-selected", String(k === i));
+        const fill = t.querySelector<HTMLElement>(".sk-fill")!;
+        fill.classList.remove("sk-run");
+        if (k === i && !reduce) {
+          void fill.offsetWidth;
+          fill.classList.add("sk-run");
+        }
+      });
+      panels.forEach((p, k) => {
+        p.hidden = k !== i;
+        if (k === i) p.querySelectorAll<HTMLElement>(".sk-chip").forEach((c) => { c.style.animation = "none"; void c.offsetWidth; c.style.animation = ""; });
+      });
+      scenes.forEach((sc, k) => { sc.hidden = k !== i; }); // re-showing restarts that scene's loop
+      title.textContent = tabs[i].querySelector("span span")!.textContent;
+      schedule();
+    };
+    const schedule = () => {
+      clearTimeout(timer);
+      if (reduce) return;
+      timer = window.setTimeout(() => { if (!hovering) show((cur + 1) % tabs.length); else schedule(); }, 9000);
+    };
+    tabs.forEach((t, i) => t.addEventListener("click", () => show(i)));
+    root.addEventListener("pointerenter", () => { hovering = true; });
+    root.addEventListener("pointerleave", () => { hovering = false; });
+    show(0);
+  }
+</script>

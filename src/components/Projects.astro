@@ -2,6 +2,7 @@
 import type { Dict } from "@/content";
 import Badge from "./Badge.astro";
 import Bezel from "./Bezel.astro";
+import Logo from "./Logo.astro";
 import PlaceholderPill from "./PlaceholderPill.astro";
 import Reveal from "./Reveal.astro";
 import Section from "./Section.astro";
@@ -20,7 +21,10 @@ const n = projects.items.length;
       <Reveal variant="card" class={bentoSpan(i, n)}>
         <Bezel lift tilt class="h-full" core={`flex h-full flex-col p-8 sm:p-12 md:min-h-[26rem] ${bentoTone(i + 1)}`}>
           <div class="flex items-start justify-between gap-4">
-            <p class="text-[13px] leading-snug text-ink-soft">{p.kicker}</p>
+            <div class="flex items-center gap-3">
+              {!/^(Personal|Self-directed)/.test(p.kicker) && <Logo name={p.kicker.split(" · ")[0]} size="sm" />}
+              <p class="text-[13px] leading-snug text-ink-soft">{p.kicker}</p>
+            </div>
             {p.placeholder ? <PlaceholderPill label={projects.placeholderLabel} /> : p.badge && <Badge>{p.badge}</Badge>}
           </div>
 

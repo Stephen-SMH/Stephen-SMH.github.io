@@ -1,0 +1,316 @@
+---
+import type { Dict } from "@/content";
+import Section from "./Section.astro";
+import SectionHead from "./SectionHead.astro";
+
+const { build } = Astro.props as { build: Dict["build"] };
+
+/**
+ * One endless 28s CI/CD story. Every keyframe shares that duration, so phases stay in sync:
+ *  0-38% type code (avatar focused) -> 38-56% pipeline commit/build/test/deploy (avatar worried)
+ *  -> 56-64% laptop fades, phone glides to the centre, avatar runs right and celebrates
+ *  -> 64-88% app builds on the phone -> 88-99% laptop fades back in, phone and avatar return.
+ * Animations only run while the section is on screen (.bl-on is toggled by the script below).
+ */
+const D = 28;
+const code: [number, [string, string][]][] = [
+  [0, [["k", "from"], ["t", " fastapi "], ["k", "import"], ["t", " FastAPI"]]],
+  [0, [["t", "app = FastAPI()"]]],
+  [0, [["t", " "]]],
+  [0, [["k", "@app"], ["t", ".post("], ["s", '"/posts/schedule"'], ["t", ")"]]],
+  [0, [["k", "async def"], ["f", " schedule"], ["t", "(post: Post):"]]],
+  [1, [["t", "job = queue.enqueue(post)"]]],
+  [1, [["k", "await"], ["t", " ai.copilot(post)"]]],
+  [1, [["k", "return"], ["t", " {"], ["s", '"status"'], ["t", ": "], ["s", '"queued"'], ["t", "}"]]],
+];
+const tone: Record<string, string> = { k: "#f472b6", s: "#86efac", f: "#93c5fd", t: "rgba(255,255,255,0.78)" };
+const stages = ["Commit", "Build", "Test", "Deploy"];
+const stageAt = [38, 43, 48, 53];
+const logs = ["✓ build   image 214 MB", "✓ test    48 passed", "✓ deploy  production"];
+const popCount = 7;
+const confetti = Array.from({ length: 10 }, (_, k) => {
+  const a = (k / 10) * Math.PI * 2;
+  return { dx: Math.round(Math.cos(a) * (90 + (k % 3) * 25)), dy: Math.round(Math.sin(a) * (90 + (k % 3) * 25)), c: ["#f472b6", "#fde68a", "#86efac", "#93c5fd", "#c4b5fd"][k % 5] };
+});
+
+// avatar path: x and y sampled every 1% (slide right at 56-64, jump while celebrating, return at 88-97)
+const avatarStops: string[] = [];
+for (let t = 0; t <= 100; t++) {
+  let x = 0;
+  if (t >= 56 && t < 64) x = ((t - 56) / 8) * 560;
+  else if (t >= 64 && t <= 88) x = 560;
+  else if (t > 88 && t < 97) x = 560 * (1 - (t - 88) / 9);
+  const flip = t >= 59 && t <= 92 ? -1 : 1;
+  const y = t >= 66 && t <= 88 ? -16 * Math.abs(Math.sin(((t - 66) / 2.4) * Math.PI)) : 0;
+  avatarStops.push(`${t}%{transform:translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scaleX(${flip})}`);
+}
+
+let css = `@keyframes bl-av{${avatarStops.join("")}}`;
+const reveal = (name: string, s: number, e: number, end = 38) =>
+  `@keyframes ${name}{0%,${s}%{clip-path:inset(0 100% 0 0)}${e}%,${end}%{clip-path:inset(0 0 0 0)}41%,100%{clip-path:inset(0 100% 0 0)}}`;
+const fade = (name: string, s: number, end = 38) =>
+  `@keyframes ${name}{0%,${s}%{opacity:0;transform:translateY(3px)}${s + 1}%,${end}%{opacity:1;transform:none}41%,100%{opacity:0}}`;
+css += reveal("bl-t0", 1.5, 8);
+css += `@keyframes bl-t1{0%,8%{opacity:0}9%,12.5%{opacity:1}13.5%,100%{opacity:0}}`;
+css += fade("bl-t2", 13);
+css += fade("bl-t3", 14.5);
+css += reveal("bl-t4", 35.2, 37.6, 40);
+code.forEach((_, k) => {
+  const s = 16 + k * 2.3, e = s + 2;
+  css += reveal(`bl-l${k}`, s, e);
+});
+logs.forEach((_, k) => {
+  const s = 44 + k * 4.5;
+  css += `@keyframes bl-g${k}{0%,${s}%{opacity:0;transform:translateX(-6px)}${s + 1.5}%,56%{opacity:1;transform:none}60%,100%{opacity:0}}`;
+});
+for (let k = 0; k < popCount; k++) {
+  const s = 63 + k * 3;
+  css += `@keyframes bl-p${k}{0%,${s}%{opacity:0;transform:translateY(10px) scale(.94)}${s + 2.5}%,86%{opacity:1;transform:none}90%,100%{opacity:0}}`;
+}
+stageAt.forEach((s, k) => {
+  css += `@keyframes bl-n${k}{0%,${s - 0.1}%{opacity:0}${s + 1}%,90%{opacity:1}94%,100%{opacity:0}}`;
+  css += `@keyframes bl-c${k}{0%,${s - 4}%{transform:scaleX(0)}${s}%,90%{transform:scaleX(1)}94%,100%{transform:scaleX(0)}}`;
+});
+[[0, 41], [41, 46], [46, 51], [51, 93]].forEach(([a, b], k) => {
+  css += `@keyframes bl-s${k}{0%,${Math.max(a - 1, 0)}%{opacity:.4}${a + 0.5}%,${b}%{opacity:1}${b + 1}%,100%{opacity:.4}}`;
+});
+css += `
+@keyframes bl-code{0%,40%{opacity:1}43%,100%{opacity:0}}
+@keyframes bl-prev{0%,42%{opacity:0}45%,56%{opacity:1}60%,100%{opacity:0}}
+@keyframes bl-prog{0%,43%{width:0}54%,100%{width:100%}}
+@keyframes bl-laptop{0%,54%{opacity:1;transform:none}60%,87%{opacity:0;transform:translateY(10px) scale(.97)}99%,100%{opacity:1;transform:none}}
+@keyframes bl-phone{0%,55%{transform:translateX(0) scale(.8)}64%,86%{transform:translateX(-334px) scale(1.07)}96%,100%{transform:translateX(0) scale(.8)}}
+@keyframes bl-ff{0%,37%{opacity:1}39%,91%{opacity:0}93%,100%{opacity:1}}
+@keyframes bl-fw{0%,38%{opacity:0}41%,55%{opacity:1}57%,100%{opacity:0}}
+@keyframes bl-fh{0%,56%{opacity:0}59%,89%{opacity:1}91%,100%{opacity:0}}
+@keyframes bl-at{0%,56%{opacity:1}58%,91%{opacity:0}93%,100%{opacity:1}}
+@keyframes bl-ac{0%,56%{opacity:0}59%,89%{opacity:1}91%,100%{opacity:0}}
+@keyframes bl-tap{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+@keyframes bl-wave{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+@keyframes bl-spin{0%{content:"✻"}25%{content:"✽"}50%{content:"✶"}75%{content:"✳"}}
+.bl-spin::before{content:"✻"}
+@keyframes bl-cur{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes bl-glow{0%,100%{opacity:.55}50%{opacity:.9}}
+@keyframes bl-conf{0%,57%{opacity:0;transform:translate(0,0) scale(.3)}60%{opacity:1}72%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1)}}
+@keyframes bl-sweat{0%,100%{transform:translateY(0);opacity:.9}50%{transform:translateY(8px);opacity:.4}}
+#build.bl-on .bl-code{animation:bl-code ${D}s linear infinite}
+#build.bl-on .bl-t0{animation:bl-t0 ${D}s linear infinite}
+#build.bl-on .bl-t1{animation:bl-t1 ${D}s linear infinite}
+#build.bl-on .bl-t2{animation:bl-t2 ${D}s linear infinite}
+#build.bl-on .bl-t3{animation:bl-t3 ${D}s linear infinite}
+#build.bl-on .bl-t4{animation:bl-t4 ${D}s linear infinite}
+#build.bl-on .bl-spin::before{animation:bl-spin .6s steps(1) infinite}
+#build.bl-on .bl-prev{animation:bl-prev ${D}s linear infinite}
+#build.bl-on .bl-prog{animation:bl-prog ${D}s linear infinite}
+#build.bl-on .bl-laptop{animation:bl-laptop ${D}s ease-in-out infinite}
+#build.bl-on .bl-phone{animation:bl-phone ${D}s ease-in-out infinite}
+#build.bl-on .bl-av{animation:bl-av ${D}s linear infinite}
+#build.bl-on .bl-ff{animation:bl-ff ${D}s linear infinite}
+#build.bl-on .bl-fw{animation:bl-fw ${D}s linear infinite}
+#build.bl-on .bl-fh{animation:bl-fh ${D}s linear infinite}
+#build.bl-on .bl-at{animation:bl-at ${D}s linear infinite}
+#build.bl-on .bl-ac{animation:bl-ac ${D}s linear infinite}
+#build.bl-on .bl-hand{animation:bl-tap .22s ease-in-out infinite alternate}
+#build.bl-on .bl-hand2{animation-delay:.11s}
+#build.bl-on .bl-wave{animation:bl-wave .35s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+#build.bl-on .bl-cur{animation:bl-cur 1s steps(1) infinite}
+#build.bl-on .bl-glow{animation:bl-glow 6s ease-in-out infinite}
+#build.bl-on .bl-sweat{animation:bl-sweat 1.2s ease-in-out infinite}
+${code.map((_, k) => `#build.bl-on .bl-l${k}{animation:bl-l${k} ${D}s linear infinite}`).join("")}
+${logs.map((_, k) => `#build.bl-on .bl-g${k}{animation:bl-g${k} ${D}s linear infinite}`).join("")}
+${Array.from({ length: popCount }, (_, k) => `#build.bl-on .bl-p${k}{animation:bl-p${k} ${D}s ease-out infinite}`).join("")}
+${stages.map((_, k) => `#build.bl-on .bl-n${k}{animation:bl-n${k} ${D}s linear infinite}#build.bl-on .bl-c${k}{animation:bl-c${k} ${D}s linear infinite}`).join("")}
+${[0, 1, 2, 3].map((k) => `#build.bl-on .bl-s${k}{animation:bl-s${k} ${D}s linear infinite}`).join("")}
+${confetti.map((_, k) => `#build.bl-on .bl-f${k}{animation:bl-conf ${D}s ease-out infinite}`).join("")}
+/* Before the section is on screen: a calm, finished frame. */
+.bl-t1,.bl-prev,.bl-ac,.bl-fw,.bl-fh,.bl-g0,.bl-g1,.bl-g2{opacity:0}
+.bl-laptop{opacity:1}
+/* The global reduce-motion rule forces 0.01ms x1 on everything; this scene is meant to play, so re-assert it. */
+@media (prefers-reduced-motion: reduce){
+ #build.bl-on [class*="bl-"]{animation-iteration-count:infinite !important}
+ #build.bl-on :is(.bl-code,.bl-t0,.bl-t1,.bl-t2,.bl-t3,.bl-t4,.bl-prev,.bl-prog,.bl-laptop,.bl-phone,.bl-av,.bl-ff,.bl-fw,.bl-fh,.bl-at,.bl-ac,${code.map((_, k) => `.bl-l${k}`).join(",")},${logs.map((_, k) => `.bl-g${k}`).join(",")},${Array.from({ length: popCount }, (_, k) => `.bl-p${k}`).join(",")},${stages.map((_, k) => `.bl-n${k},.bl-c${k}`).join(",")},.bl-s0,.bl-s1,.bl-s2,.bl-s3,${confetti.map((_, k) => `.bl-f${k}`).join(",")}){animation-duration:${D}s !important}
+ #build.bl-on .bl-hand{animation-duration:.22s !important}
+ #build.bl-on .bl-wave{animation-duration:.35s !important}
+ #build.bl-on .bl-cur{animation-duration:1s !important}
+ #build.bl-on .bl-spin::before{animation-duration:.6s !important}
+ #build.bl-on .bl-glow{animation-duration:6s !important}
+ #build.bl-on .bl-sweat{animation-duration:1.2s !important}
+}`;
+---
+<Section id="build">
+  <SectionHead eyebrow={build.eyebrow} title={build.title} />
+
+  <div class="relative mx-auto w-full max-w-5xl overflow-hidden rounded-[2rem] shadow-[0_40px_90px_-40px_rgba(60,40,180,0.6)]" data-build aria-hidden="true">
+    <div class="origin-top-left" style="width:880px;height:470px" data-build-inner>
+      <div class="absolute inset-0" style="background:linear-gradient(180deg,#1b1738 0%,#2a3278 55%,#4a58c9 100%)"></div>
+      <div class="bl-glow absolute -top-24 left-1/2 h-72 w-[40rem] -translate-x-1/2 rounded-full" style="background:radial-gradient(closest-side,rgba(255,110,200,.55),transparent)"></div>
+      <div class="bl-glow absolute -bottom-28 left-10 h-72 w-[34rem] rounded-full" style="background:radial-gradient(closest-side,rgba(170,160,255,.6),transparent)"></div>
+
+      <!-- CI/CD pipeline -->
+      <div class="absolute flex items-center" style="left:190px;top:16px;width:500px">
+        {stages.map((st, k) => (
+          <>
+            <div class="relative rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 font-mono text-[11px] text-white/55">
+              {st}
+              <span class={`bl-n${k} absolute inset-0 flex items-center justify-center rounded-full border border-emerald-300/70 bg-emerald-400/90 font-mono text-[11px] font-medium text-emerald-950`} style="opacity:1">✓ {st}</span>
+            </div>
+            {k < stages.length - 1 && (
+              <div class="relative mx-1 h-[3px] flex-1 overflow-hidden rounded-full bg-white/15">
+                <i class={`bl-c${k} absolute inset-0 origin-left bg-emerald-300`} style="transform:scaleX(1)"></i>
+              </div>
+            )}
+          </>
+        ))}
+      </div>
+
+      <!-- Laptop -->
+      <div class="bl-laptop absolute" style="left:150px;top:74px;width:540px">
+        <div class="rounded-[18px] border border-white/25 bg-white/10 p-2 backdrop-blur" style="height:336px">
+          <div class="relative h-full overflow-hidden rounded-xl bg-[#0d0b24]/80">
+            <div class="flex items-center gap-1.5 border-b border-white/10 px-3 py-2">
+              <i class="h-2 w-2 rounded-full bg-white/30"></i><i class="h-2 w-2 rounded-full bg-white/30"></i><i class="h-2 w-2 rounded-full bg-white/30"></i>
+              <span class="ml-3 font-mono text-[10px] text-white/40">main.py — social-app — Visual Studio Code</span>
+            </div>
+            <div class="bl-code absolute inset-x-0 bottom-0 top-8 flex flex-col font-mono text-[10px] leading-[1.45] text-white/75">
+              <div class="flex min-h-0 flex-1">
+                <!-- activity bar -->
+                <div class="flex w-7 shrink-0 flex-col items-center gap-2.5 border-r border-white/10 bg-white/[0.03] py-2">
+                  {[0, 1, 2, 3].map((n) => <i class={`block h-3.5 w-3.5 rounded-[3px] ${n === 0 ? "bg-white/70" : "bg-white/20"}`}></i>)}
+                </div>
+                <!-- explorer -->
+                <div class="w-[92px] shrink-0 border-r border-white/10 bg-white/[0.03] px-2 py-2">
+                  <p class="text-[8.5px] tracking-widest text-white/40">EXPLORER</p>
+                  <p class="mt-1.5 text-white/60">⌄ social-app</p>
+                  <p class="pl-2.5 text-white/45">› tests</p>
+                  <p class="pl-2.5 text-white/45">› app</p>
+                  <p class="bl-t3 flex justify-between pl-2.5" style="color:#86efac"><span>main.py</span><span class="pr-0.5 text-[8.5px]">U</span></p>
+                  <p class="pl-2.5 text-white/45">Dockerfile</p>
+                  <p class="pl-2.5 text-white/45">ci.yml</p>
+                </div>
+                <!-- editor -->
+                <div class="min-w-0 flex-1 border-r border-white/10">
+                  <div class="flex h-5 items-end border-b border-white/10 bg-white/[0.03]">
+                    <span class="bl-t2 border-t-2 bg-white/[0.06] px-2 py-0.5 text-white/80" style="border-color:#d97757">main.py</span>
+                  </div>
+                  <div class="px-2 pt-1.5">
+                    {code.map(([ind, toks], k) => (
+                      <div class={`bl-l${k} flex whitespace-pre rounded-sm`} style="background:rgba(52,211,153,.12)">
+                        <span class="w-3.5 shrink-0 text-right text-white/25">{k + 1}</span>
+                        <span class="pl-2" style={`padding-left:${8 + ind * 12}px`}>{toks.map(([t, txt]) => <span style={`color:${tone[t]}`}>{txt}</span>)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <!-- Claude Code panel -->
+                <div class="w-[158px] shrink-0 space-y-1 px-2 py-2" style="background:rgba(217,119,87,.06)">
+                  <p class="flex items-center gap-1.5 text-[9.5px] text-white/85"><span style="color:#d97757">✻</span> <b class="font-semibold">Claude Code</b></p>
+                  <div class="bl-t0 rounded border border-white/20 px-1.5 py-1 text-white/85">&gt; add a /posts/schedule endpoint with an AI copilot<i class="bl-cur ml-0.5 inline-block h-2.5 w-[5px] translate-y-[2px] bg-white/70"></i></div>
+                  <div class="grid">
+                    <p class="bl-t1 [grid-area:1/1]"><span class="bl-spin" style="color:#d97757"></span> <span style="color:#d97757">Thinking…</span></p>
+                    <p class="bl-t2 [grid-area:1/1]"><span class="text-emerald-300">⏺</span> Write(<span class="text-sky-300">main.py</span>)</p>
+                  </div>
+                  <p class="bl-t3 pl-3 text-white/45">⎿ Wrote 8 lines</p>
+                  <p class="bl-t4"><span class="text-emerald-300">⏺</span> Bash(<span class="text-sky-300">git push</span>)</p>
+                </div>
+              </div>
+              <!-- status bar -->
+              <div class="flex h-4 shrink-0 items-center justify-between px-2 text-[8.5px] text-white" style="background:#3b5bdb">
+                <span>⎇ main</span><span>Python · UTF-8</span>
+              </div>
+            </div>
+            <div class="bl-prev absolute inset-x-0 top-9 px-8 pt-8">
+              <p class="font-mono text-[12px] text-white/60">pipeline #128 · main</p>
+              <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/15"><i class="bl-prog block h-full rounded-full bg-gradient-to-r from-pink-400 to-indigo-300" style="width:100%"></i></div>
+              <div class="mt-5 space-y-2 font-mono text-[13px] text-emerald-200">
+                {logs.map((l, k) => <p class={`bl-g${k}`}>{l}</p>)}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mx-auto h-3.5 rounded-b-2xl border border-t-0 border-white/25 bg-white/15" style="width:112%;margin-left:-6%"></div>
+      </div>
+
+      <!-- Avatar: slides right and changes mood -->
+      <div class="bl-av absolute" style="left:36px;top:150px;width:170px;height:260px;transform-origin:50% 100%">
+        <svg width="170" height="260" viewBox="0 0 170 260" overflow="visible">
+          <ellipse cx="70" cy="248" rx="58" ry="8" fill="rgba(0,0,0,.25)" />
+          <rect x="34" y="118" width="74" height="118" rx="30" fill="#f472b6" />
+          <rect x="42" y="226" width="22" height="26" rx="8" fill="#312e81" /><rect x="76" y="226" width="22" height="26" rx="8" fill="#312e81" />
+          <circle cx="72" cy="82" r="30" fill="#f5c8a0" />
+          <path d="M42 80c0-26 20-40 42-34 16 4 22 20 20 32-8-14-22-18-34-14-12 4-20 12-28 16z" fill="#2b1b3d" />
+          <!-- focused -->
+          <g class="bl-ff"><circle cx="86" cy="86" r="3" fill="#2b1b3d" /><circle cx="64" cy="86" r="3" fill="#2b1b3d" /><path d="M64 100h20" stroke="#b4602f" stroke-width="2.2" stroke-linecap="round" /></g>
+          <!-- worried -->
+          <g class="bl-fw" style="opacity:0"><circle cx="86" cy="88" r="3.4" fill="#2b1b3d" /><circle cx="64" cy="88" r="3.4" fill="#2b1b3d" /><path d="M56 76l14 4M94 76l-14 4" stroke="#2b1b3d" stroke-width="2.4" stroke-linecap="round" /><path d="M62 102q5-5 10 0t10 0" stroke="#b4602f" stroke-width="2.2" fill="none" stroke-linecap="round" /><path class="bl-sweat" d="M100 66q5 8 0 11-5-3 0-11z" fill="#7dd3fc" /></g>
+          <!-- happy -->
+          <g class="bl-fh" style="opacity:0"><path d="M58 88q6-8 12 0M80 88q6-8 12 0" stroke="#2b1b3d" stroke-width="2.8" fill="none" stroke-linecap="round" /><path d="M58 98q14 18 28 0z" fill="#b4602f" /><circle cx="54" cy="96" r="5" fill="#f4a0a0" opacity=".7" /><circle cx="92" cy="96" r="5" fill="#f4a0a0" opacity=".7" /></g>
+          <!-- typing arms -->
+          <g class="bl-at">
+            <path d="M96 140C130 150 150 170 164 188" stroke="#f472b6" stroke-width="20" stroke-linecap="round" fill="none" />
+            <path d="M92 156C124 172 138 192 150 208" stroke="#e45a9f" stroke-width="18" stroke-linecap="round" fill="none" />
+            <circle class="bl-hand" cx="166" cy="190" r="10" fill="#f5c8a0" /><circle class="bl-hand bl-hand2" cx="152" cy="210" r="10" fill="#f5c8a0" />
+          </g>
+          <!-- celebrating arms -->
+          <g class="bl-ac" style="opacity:0">
+            <path d="M44 140C20 124 12 100 16 70" stroke="#f472b6" stroke-width="20" stroke-linecap="round" fill="none" />
+            <path d="M100 140C124 124 132 100 128 70" stroke="#f472b6" stroke-width="20" stroke-linecap="round" fill="none" />
+            <circle class="bl-wave" cx="16" cy="64" r="11" fill="#f5c8a0" /><circle class="bl-wave" cx="128" cy="64" r="11" fill="#f5c8a0" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- Phone -->
+      <div class="bl-phone absolute rounded-[34px] border-[6px] border-pink-400/90 bg-white/10 p-2.5 shadow-[0_0_50px_-10px_rgba(244,114,182,.7)] backdrop-blur" style="left:664px;top:100px;width:220px;height:350px;transform:scale(.8)">
+        <span class="mx-auto mb-2 block h-3 w-16 rounded-full bg-white/30"></span>
+        <div class="space-y-2.5">
+          <div class="bl-p0 flex items-center gap-2"><i class="h-7 w-7 rounded-full bg-pink-300/80"></i><i class="h-3 flex-1 rounded-full bg-white/30"></i></div>
+          <div class="bl-p1 h-20 rounded-2xl bg-gradient-to-br from-pink-400/70 to-indigo-400/70 p-3"><i class="block h-2.5 w-16 rounded-full bg-white/70"></i><i class="mt-2 block h-2 w-24 rounded-full bg-white/40"></i></div>
+          <div class="bl-p2 h-9 rounded-xl bg-white/20"></div>
+          <div class="bl-p3 h-9 rounded-xl bg-white/20"></div>
+          <div class="bl-p4 h-9 rounded-xl bg-white/20"></div>
+          <div class="bl-p5 rounded-full bg-pink-400 py-2 text-center text-[11px] font-medium text-white">Schedule post</div>
+          <div class="bl-p6 text-center text-[12px] text-pink-200">✦ Live</div>
+        </div>
+        <div class="pointer-events-none absolute left-1/2 top-1/2">
+          {confetti.map((c, k) => <i class={`bl-f${k} absolute h-2 w-2 rounded-sm`} style={`--dx:${c.dx}px;--dy:${c.dy}px;background:${c.c};opacity:0`}></i>)}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ol class="mx-auto mt-8 grid max-w-5xl gap-4 sm:grid-cols-4">
+    {build.steps.map((st, k) => (
+      <li class={`bl-s${k} border-t border-rule pt-4`}>
+        <p class="font-mono text-[12px] text-accent">0{k + 1}</p>
+        <h3 class="mt-1 font-display text-lg font-semibold text-ink">{st.title}</h3>
+        <p class="mt-1 text-[14px] leading-relaxed text-ink-soft">{st.desc}</p>
+      </li>
+    ))}
+  </ol>
+</Section>
+<style is:inline set:html={css}></style>
+<script>
+  // The scene is authored at 880x470 and scaled to the container width.
+  const box = document.querySelector<HTMLElement>("[data-build]")!;
+  const inner = box.querySelector<HTMLElement>("[data-build-inner]")!;
+  const fit = () => {
+    const s = box.clientWidth / 880;
+    inner.style.transform = `scale(${s})`;
+    box.style.height = `${470 * s}px`;
+  };
+  new ResizeObserver(fit).observe(box);
+  fit();
+
+  // Start the loop from the beginning each time the section scrolls into view; stop it when it leaves.
+  const sec = document.getElementById("build")!;
+  new IntersectionObserver(
+    ([e]) => {
+      if (e.isIntersecting) {
+        sec.classList.remove("bl-on");
+        void sec.offsetWidth; // restart from t=0
+        sec.classList.add("bl-on");
+      } else sec.classList.remove("bl-on");
+    },
+    { threshold: 0.35 },
+  ).observe(sec);
+</script>
